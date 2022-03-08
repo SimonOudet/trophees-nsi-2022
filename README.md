@@ -1,9 +1,9 @@
-### trophees-nsi-2022
+# trophees-nsi-2022
 
-# description
+### description
 It's a game where we shot monsters
 and play music :)
 
-# collaborators
+### collaborators
 Lemmanuel1812 : sleeping
 SimonOudet : project manager
