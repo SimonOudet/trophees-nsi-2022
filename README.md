@@ -5,5 +5,5 @@ It's a game where we shot monsters
 and play music :)
 
 ### collaborators
-Lemmanuel1812 : sleeping
-SimonOudet : project manager
+- Lemmanuel1812 : sleeping
+- SimonOudet : project manager
