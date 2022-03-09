@@ -35,3 +35,9 @@ class Level :
 
     def change_loot (self, i, loot) :
         self.loots [i] = loot
+
+    def get_drawable (self) :
+        return [self.player] + self.monsters
+
+    def get_pulsable (self) :
+        return [self.player] + self.monsters

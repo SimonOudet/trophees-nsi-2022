@@ -13,3 +13,9 @@ class Video :
 
     def set_screen (self, screen) :
         self.screen = screen
+
+    def add (self, surf, coor) :
+        self.screen.blit (surf, coor)
+
+    def cancel (self) :
+        self.screen.fill ("black")
