@@ -1,4 +1,7 @@
 
 class Pulsable :
-    def pulse () :
-        pass
+    def pulse (self) :
+        """
+        A refresh function called each frame
+        you can do what you want here
+        """

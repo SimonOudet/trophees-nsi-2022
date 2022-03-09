@@ -1,20 +1,36 @@
-import imp
 import pygame
 import pulsable
 
 class Drawable (pulsable.Pulsable) :
-    def __init__ (self, anim, times, ID, coord) :
-        self.clock = pygame.time.Clock ()
+
+    counter = 0 # static attribute wich count the number of Drawable pbject created
+    def __init__ (self, anim:list, times:list, ID:str, coord:tuple) :
+        """
+        Basic constructor of a Drawable object
+        
+        input : - anim : a list of all Surface used for the animation
+                - times : a list of all times (in ms) of all frame of the animation
+                - ID : unique identifier (type (P, M...) + number)
+                - coord : the coordinates of the top left corner
+        """
         self.anim = anim
-        self.times = times
         self.coord = coord
-        self.ID = ID
+        self.clock = pygame.time.Clock ()
+        self.times = times
         self.time = 0
-        self.i = 0
+        self.i = 0 # current frame
+        self.ID = str (Drawable.counter) + ID
+        Drawable.counter += 1
     
-    def draw (self) :
+    def draw (self)-> list :
+        """
+        Function to call each frame
+
+        output : - the surface of the current frame
+                 - the coordinates of the top left corner
+        """
         self.time += self.clock.tick ()
-        if (self.time >= self.times [self.i]) :
+        if (self.time >= self.times [self.i]) : # change frame
             self.time = 0
             self.i += 1
             if (self.i == len (self.anim)) :

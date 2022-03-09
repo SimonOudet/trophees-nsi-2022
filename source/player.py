@@ -1,8 +1,14 @@
 import entity
 
 class Player (entity.Entity) :
-    def __init__ (self, anim, times, ID, coord):
-        super ().__init__ (anim, times, ID, coord)
-    
-    def pulse (self) :
-        pass
+    def __init__ (self, anim:list, times:list, coord:tuple, hp:int):
+        """
+        Basic constructor of a Drawable object
+        
+        input : - anim : a list of all Surface used for the animation
+                - times : a list of all times (in ms) of all frame of the animation
+                - ID : unique identifier (P + number)
+                - coord : the coordinates of the top left corner
+                - hp : starting health points
+        """
+        super ().__init__ (anim, times, "P", coord, hp)
