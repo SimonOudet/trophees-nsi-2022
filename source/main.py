@@ -1,8 +1,9 @@
-import monster
+import sequence
 import pygame
 import player
 import video
 import level
+import boss
 import sys
 
 def init ()->list :
@@ -15,7 +16,7 @@ def init ()->list :
     pygame.init ()
 
     # level genreration
-    current_level = level.Level (generate_map (20, 20), player.Player (load_animation ("test", 1), [1000], (20, 20), 20), [], [])
+    current_level = level.Level (generate_map (20, 20), player.Player (load_animation ("test", 1), [1000], (20, 20), 20), [boss.Boss (load_animation ("test", 1), [1000], (80, 80), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000]))], [])
 
     # video
     screen = video.Video (2 / 3)
@@ -59,7 +60,7 @@ while True :
     
     # pulse
     for p in current_level.get_pulsable () :
-        p.pulse ()
+        p.pulse (current_level.get_map ())
 
     # animation
     screen.cancel ()

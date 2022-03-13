@@ -7,7 +7,7 @@ class Entity (drawable.Drawable) :
         
         input : - anim : a list of all Surface used for the animation
                 - times : a list of all times (in ms) of all frame of the animation
-                - ID : unique identifier (E + number)
+                - ID : unique identifier
                 - coord : the coordinates of the top left corner
                 - hp : starting health points
         """
@@ -38,3 +38,23 @@ class Entity (drawable.Drawable) :
         input : - val : the value to add
         """
         self.hp += val
+
+    def move (self, coor:tuple, map:list) :
+        """
+        Move the entity
+        
+        input : - coor : the coordinates that will increase the currents coordinates
+                - map : the level representation
+        """
+        self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+        # !CHANGE MAP!
+    
+    def go_to (self, coor:tuple, map:list) :
+        """
+        Chnage the position of the entity
+        
+        input : - coor : the new coordinates
+                - map : the level representation
+        """
+        self.coord = coor
+        # !CHANGE MAP!

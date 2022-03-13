@@ -10,7 +10,7 @@ class Drawable (pulsable.Pulsable) :
         
         input : - anim : a list of all Surface used for the animation
                 - times : a list of all times (in ms) of all frame of the animation
-                - ID : unique identifier (type (P, M...) + number)
+                - ID : unique identifier type (P, M...)
                 - coord : the coordinates of the top left corner
         """
         self.anim = anim

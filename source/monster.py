@@ -7,7 +7,6 @@ class Monster (entity.Entity) :
         
         input : - anim : a list of all Surface used for the animation
                 - times : a list of all times (in ms) of all frame of the animation
-                - ID : unique identifier (M + number)
                 - coord : the coordinates of the top left corner
                 - hp : starting health points
         """

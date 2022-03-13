@@ -2,7 +2,7 @@ import monster
 import player
 
 class Level :
-    def __init__ (self, map:list, player:player.Player, monsters:monster.Monster, loots:list) :
+    def __init__ (self, map:list, player:player.Player, monsters:list, loots:list) :
         """
         Basic constructor of a Level object
         
