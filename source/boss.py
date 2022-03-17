@@ -7,10 +7,10 @@ class Boss (entity.Entity) :
         """
         Basic constructor of a boss object
         
-        input : - anim : a list of all Surface used for the animation
-                - times : a list of all times (in ms) of all frame of the animation
-                - coord : the coordinates of the top left corner
-                - hp : starting health points
+        input : - anim : a list of all Surface used for the animation \n
+                - times : a list of all times (in ms) of all frame of the animation \n
+                - coord : the coordinates of the top left corner \n
+                - hp : starting health points \n
                 - seq : the fight sequence
         """
         super ().__init__ (anim, times, "B", coord, hp)
@@ -42,7 +42,7 @@ class Boss (entity.Entity) :
         """
         Make an attack against all of the given coordinates
 
-        input : - map : the level representation
+        input : - map : the level representation \n
                 - dest : a list of coordinates
         """
         pass

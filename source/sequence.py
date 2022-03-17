@@ -4,7 +4,7 @@ class Sequence :
         """
         Basic constructor of a Sequence object
         
-        input : - actions : a list of actions
+        input : - actions : a list of actions \n
                 - times : the list of times (ms) for each action
         """
         self.actions = actions
@@ -15,7 +15,7 @@ class Sequence :
         """
         Get the action and the time of a turn
         
-        output : - the action
+        output : - the action \n
                  - the time
         """
         self.i += 1
@@ -26,7 +26,7 @@ class Action :
         """
         Basic constructor of an Action object
         
-        input : - type : the type of the action (M: move, A: attack)
+        input : - type : the type of the action (M: move, A: attack) \n
                 - dest : the coordinates of the destination in the case of a moving, or
                          the coordinates of the affected case in the case of an attack
         """

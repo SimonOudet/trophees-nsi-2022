@@ -1,21 +1,34 @@
+import general as ge
+import drawable
 import monster
 import player
+import video
 
 class Level :
     def __init__ (self, map:list, player:player.Player, monsters:list, loots:list) :
         """
         Basic constructor of a Level object
         
-        input : - map : a double array wich represent a map of the level ! TO COMPLETE !
-                - player : the player of the level
-                - monsters : an array with all the monsters of the level
+        input : - map : a double array wich represent a map of the level ! TO COMPLETE ! \n
+                - player : the player of the level \n
+                - monsters : an array with all the monsters of the level \n
                 - loots : an array with all the loots of the level
         """
         self.map = map
+        self.load_map ()
         self.player = player
         self.monsters = monsters
         self.loots = loots
     
+    def load_map (self)->list :
+        self.environment = []
+        for i in range (len (self.map)) :
+            for j in range (len (self.map[i])) :
+                if (self.map[i][j] == "-") : # ground
+                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH, ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
+                elif (self.map[i][j] == "#") : # wall
+                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH, ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+
     def get_map (self)->list :
         """
         Get the map of the level
@@ -31,16 +44,18 @@ class Level :
         input : - map : a double array wich represent a map of the new level ! TO COMPLETE !
         """
         self.map = map
+        self.load_map ()
     
     def change_map (self, x:int, y:int, val:str) :
         """
         Change the map of the level
         
-        input : - x : the x ccordinate
-                - y : the y coordinate
+        input : - x : the x ccordinate \n
+                - y : the y coordinate \n
                 - val : the new value of this place
         """
         self.map [y][x] = val
+        self.load_map () # ! CHANGE !
     
     def get_player (self)->player.Player :
         """
@@ -70,7 +85,7 @@ class Level :
         """
         Modify a monster of this level
         
-        input : - i : the number of te monster
+        input : - i : the number of te monster \n
                 - monster : the new monster
         """
         self.monsters [i] = monster
@@ -95,7 +110,7 @@ class Level :
         """
         Modify a loot of this level
         
-        input : - i : the number of the loot
+        input : - i : the number of the loot \n
                 - loot : the new loot
         """
         self.loots [i] = loot
@@ -106,7 +121,7 @@ class Level :
 
         output : all the drawable object of this level
         """
-        return [self.player] + self.monsters
+        return [self.player] + self.monsters + self.environment
 
     def get_pulsable (self)->list :
         """

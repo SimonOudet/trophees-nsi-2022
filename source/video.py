@@ -9,8 +9,13 @@ class Video :
         input : - coef : the fraction of the screen size used
         """
         self.screen_size = pygame.display.get_desktop_sizes () [0]
-        self.screen = pygame.display.set_mode ((self.screen_size [0] * coef, self.screen_size [1] * coef))
-    
+        self.screen = pygame.display.set_mode ((self.screen_size [0] * coef, self.screen_size [1] * coef), pygame.RESIZABLE)
+        self.zoom = int (self.screen.get_size ()[0] / 18) # ! CHANGE !
+
+    def change_screen_size (self, size) :
+        pygame.transform.scale (self.screen, size)
+        self.zoom = int (self.screen.get_size ()[0] / 18) # ! CHANGE !
+
     def get_screen_size (self)->tuple :
         """
         Get the screen size
@@ -39,10 +44,10 @@ class Video :
         """
         Draw a Surface into the screen
 
-        input : - surf : the surface to draw
+        input : - surf : the surface to draw \n
                 - coor : the coordinates of the top left corner
         """
-        self.screen.blit (surf, coor)
+        self.screen.blit (pygame.transform.scale (surf, (self.zoom, self.zoom)), (coor[0] * self.zoom, coor[1] * self.zoom))
 
     def cancel (self) :
         """
@@ -56,3 +61,15 @@ class Video :
         to make visible the changes
         """
         pygame.display.flip ()
+    
+    @staticmethod
+    def load_animation (path:str, n:int)->list :
+        """
+        Return a list of Surface corresponding
+        to a special animation
+    
+        input : - path : the path of the png file starting in the img directory and without the png extention \n
+                - n : the number of frames \n
+        output : - the list of Surface
+        """
+        return [pygame.image.load ("img/" + path + str (i) + ".png") for i in range (n)]
