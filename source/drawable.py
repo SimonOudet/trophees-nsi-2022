@@ -23,6 +23,9 @@ class Drawable (pulsable.Pulsable) :
         self.ID = ID + str (Drawable.counter)
         Drawable.counter += 1
     
+    def get_pos (self)->tuple :
+        return self.coord
+
     def draw (self)-> list :
         """
         Function to call each frame

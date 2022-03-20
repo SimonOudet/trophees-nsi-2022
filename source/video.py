@@ -12,7 +12,12 @@ class Video :
         self.screen = pygame.display.set_mode ((self.screen_size [0] * coef, self.screen_size [1] * coef), pygame.RESIZABLE)
         self.zoom = int (self.screen.get_size ()[0] / 18) # ! CHANGE !
 
-    def change_screen_size (self, size) :
+    def change_screen_size (self, size:tuple) :
+        """
+        Change the size of the screen
+        
+        input : - size : the new screen size
+        """
         pygame.transform.scale (self.screen, size)
         self.zoom = int (self.screen.get_size ()[0] / 18) # ! CHANGE !
 

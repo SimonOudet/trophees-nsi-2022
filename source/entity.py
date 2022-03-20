@@ -46,8 +46,11 @@ class Entity (drawable.Drawable) :
         input : - coor : the coordinates that will increase the currents coordinates \n
                 - map : the level representation
         """
-        self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-        # !CHANGE MAP!
+        x = self.coord [0] + coor [0]
+        y = self.coord [1] + coor [1]
+        size = (len (map[0]), len (map))
+        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] == "-") :
+            self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
     
     def go_to (self, coor:tuple, map:list) :
         """
@@ -56,5 +59,6 @@ class Entity (drawable.Drawable) :
         input : - coor : the new coordinates \n
                 - map : the level representation
         """
-        self.coord = coor
-        # !CHANGE MAP!
+        size = (len (map[0]), len (map))
+        if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] == "-") :
+            self.coord = coor

@@ -1,3 +1,4 @@
+import basic_math as ma
 import general as ge
 import drawable
 import monster
@@ -20,14 +21,22 @@ class Level :
         self.monsters = monsters
         self.loots = loots
     
-    def load_map (self)->list :
+    def load_map (self) :
+        """
+        Load the drawables objects
+        corresponding to the environment
+        """
         self.environment = []
+        self.hiden_environment = []
         for i in range (len (self.map)) :
             for j in range (len (self.map[i])) :
                 if (self.map[i][j] == "-") : # ground
-                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH, ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
+                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == "#") : # wall
-                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH, ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_not_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+        self.dicover = {i.get_pos ():False for i in self.environment}
 
     def get_map (self)->list :
         """
@@ -115,13 +124,14 @@ class Level :
         """
         self.loots [i] = loot
 
-    def get_drawable (self)->list :
+    def get_drawable (self, player_pos:tuple)->list :
         """
         Get all the drawable object of this level
 
+        input : - player_pos : the player position \n
         output : all the drawable object of this level
         """
-        return [self.player] + self.monsters + self.environment
+        return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if ma.is_in_square (player_pos, 5, i.get_pos (), True, self.dicover)] + self.monsters + [self.player] # !CHANGE!
 
     def get_pulsable (self)->list :
         """
