@@ -16,13 +16,16 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
               , ...]
             
             example:
-                table_boss_rooms = [([["v", "v", "v", "g", "v"], ["v", "g", "g", "g", "g"], ["g", "g", "g", "g", "v"], ["v", "g", "p", "g", "v"]])]
+                table_boss_rooms = [[["v", "v", "v", "g", "v"], ["v", "g", "g", "g", "g"], ["g", "g", "g", "g", "v"], ["v", "g", "p", "g", "v"]]]
     
     output : 
         - a double-entry table representing a floor, whose boss rooms are accessible and 
             randomly generated on the floor
+        - boss_position = [(x, y), ...]
 
     """ 
+    boss_position = []
+    door_position = []
     stage = [[" "] * (stage_size * 2) for i in range (stage_size * 2)]
     for boss_room in table_boss_rooms :
         compass = random.choice(["north", "south", "east", "west"])
@@ -48,18 +51,18 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         else :
             new_boss_room = boss_room
         
-        x_starting = random.randint (0, stage_size)
-        y_starting = random.randint (0, stage_size)
+        x_starting = random.randint (4, (stage_size + 4))
+        y_starting = random.randint (4, (stage_size + 4))
         
         while not (colision_test (new_boss_room, stage, x_starting, y_starting)) :
             x_starting += 1
             y_starting += 1
-            if (x_starting > stage_size) :
-                x_starting = random.randint (0, stage_size)
-            if (y_starting > stage_size) :
-                y_starting = random.randint (0, stage_size)
+            if (x_starting > stage_size + 4) :
+                x_starting = random.randint (4, (stage_size + 4))
+            if (y_starting > stage_size + 4) :
+                y_starting = random.randint (4, (stage_size + 4))
         
-        room_generator (new_boss_room, stage, x_starting, y_starting)
+        room_generator (new_boss_room, stage, x_starting, y_starting, boss_position, door_position)
         #for elt in stage :
             #print (elt)
         #print ("")
@@ -68,8 +71,40 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "M") :
                 stage[line_stage][column_stage] = " "
+            #print (stage[line_stage][column_stage], end=" ")
+        #print("")
+    
+    family = {door_position[i]:i for i in range (len (door_position))}
+    while sum(family.values()) != 0 :
+        departur_door = door_position[random.randint(0, len(door_position) - 1)]
+        door_index = random.randint(0, len(door_position) - 1)
+        finish_door = door_position[door_index]
+        while (family[finish_door] == family[departur_door]) :
+            door_index += 1
+            if (door_index >= len (door_position)) :
+                door_index = 0
+            finish_door = door_position[door_index]
+        path(stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])
+        for position in door_position :
+            if (family[position] == max (family[departur_door], family[finish_door])) :
+                family[position] = min (family[departur_door], family[finish_door])
+    
+    for line_stage in range (len (stage)) :
+        for column_stage in range (len (stage[line_stage])) :
+            if (stage[line_stage][column_stage] == "_") :
+                for i in range (-1, 2) :
+                    for j in range (-1, 2) :
+                        if (stage[line_stage + i][column_stage + j] == " ") :
+                            stage[line_stage + i][column_stage + j] = "#"
+    
+    for line_stage in range (len (stage)) :
+        for column_stage in range (len (stage[line_stage])) :
             print (stage[line_stage][column_stage], end=" ")
         print("")
+    
+    return boss_position
+    
+    
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """
@@ -89,7 +124,7 @@ def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_sta
                 return False
     return True
 
-def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
+def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int, boss_position:list, door_position:list) :
     """
     function that generates a boss room on the stage
     
@@ -97,17 +132,71 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
         - boss_rooms : it's the matrice that represent the boss room
         - stage : this is the stage that the function will modify 
         - x_starting_coordinate,  y_starting_coordinate : the angle coordinate of the boss room
+        - boss_position voir fonction stage_generator
+        - door_position voir fonction stage_generator
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
-            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == " ") and (boss_rooms[line][column] != " "):
+            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == " ") and (boss_rooms[line][column] != " ") :
                 stage[line + x_starting_coordinate][column + y_starting_coordinate] = boss_rooms[line][column]
+            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == "B") :
+                boss_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
+            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == ".") :
+                door_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
 
-def path () :
+def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int, previous = (0, 0)) :
     """
     
     """
-    pass
+    #if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
+        #return
+    x_ideal = x_finish_position - x_departur_position
+    y_ideal = y_finish_position - y_departur_position
+    ideals = []
+    not_ideals = []
+    
+    if (x_departur_position <= 1) :
+        ideals.append((1, 0))
+    elif (x_departur_position >= (len (stage) - 1)) :
+        ideals.append((-1, 0))
+    elif (x_ideal > 0) :
+        ideals.append ((1, 0))
+        not_ideals.append ((-1, 0))
+    elif (x_ideal < 0) :
+        ideals.append ((-1, 0))
+        not_ideals.append ((1, 0))
+    else :
+        not_ideals.extend ([(1, 0), (-1, 0)])
+    
+    if (y_departur_position <= 1) :
+        ideals.append((0, 1))
+    elif (y_departur_position >= (len (stage[0]) - 1)) :
+        ideals.append((0, -1))
+    elif (y_ideal > 0) :
+        ideals.append ((0, 1))
+        not_ideals.append ((0, -1))
+    elif (y_ideal < 0) :
+        ideals.append ((0, -1))
+        not_ideals.append ((0, 1))
+    else :
+        not_ideals.extend ([(0, 1), (0, -1)])
+    
+    random.shuffle (ideals)
+    random.shuffle (not_ideals)
+    path_posibility = ideals + not_ideals
+    
+    for posibility in path_posibility :
+        x = x_departur_position + posibility[0]
+        y = y_departur_position + posibility[1]
+        if (x == x_finish_position) and (y == y_finish_position) :
+            return
+        #if (stage[x][y] == "_") and (posibility != previous) :
+            #return path(stage, x_finish_position, y_finish_position, x, y, posibility)
+        if (stage[x][y] == " ") :
+            stage[x][y] = "_"
+            return path(stage, x_finish_position, y_finish_position, x, y, posibility)
+        
+     
 
 ########principal########
 
@@ -115,11 +204,11 @@ def path () :
 #table = [[[" ", "#", " ", "#"], [" ", "#", "#", "#"], ["#", "#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"], ["#", "#", " "]]]
 #for this test the size must biger than 4.
 size = 18 * 2
-# " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground
+# " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground, "B" = boss, "_" = path
 table = [
     [
      ["#", "#", "#", "#", "#"], 
-     ["#", "-", "-", "-", "#"], 
+     ["#", "-", "B", "-", "#"], 
      ["#", "-", "-", "-", "#"], 
      ["#", "-", "-", "-", "#"], 
      ["#", "#", ".", "#", "#"], 
@@ -129,19 +218,19 @@ table = [
      ["M", "M", "M", "M", "M", "M", "M"], 
      ["#", "#", "#", "#", ".", "#", "#"], 
      ["#", "-", "-", "-", "-", "-", "#"], 
-     ["#", "-", "-", "-", "-", "-", "#"], 
+     ["#", "B", "-", "-", "-", "-", "#"], 
      ["#", "#", "#", "#", "#", "#", "#"]
      ], 
     [
      [" ", "#", "#", "#", "M"], 
      ["#", "#", "-", "#", "M"], 
      ["#", "-", "-", ".", "M"], 
-     ["#", "#", "-", "#", "M"], 
+     ["#", "#", "B", "#", "M"], 
      [" ", "#", "#", "#", "M"]
      ], 
     [
      ["#", "#", "#", "#", "#"], 
-     ["#", "-", "-", "-", "#"], 
+     ["#", "B", "-", "-", "#"], 
      ["#", "-", "-", "-", "#"], 
      ["#", "-", "-", "-", "#"], 
      ["#", "#", ".", "#", "#"], 
@@ -150,14 +239,14 @@ table = [
     [
      ["M", "M", "M", "M", "M", "M", "M"], 
      ["#", "#", "#", "#", ".", "#", "#"], 
-     ["#", "-", "-", "-", "-", "-", "#"], 
+     ["#", "B", "-", "-", "-", "-", "#"], 
      ["#", "-", "-", "-", "-", "-", "#"], 
      ["#", "#", "#", "#", "#", "#", "#"]
      ], 
     [
      [" ", "#", "#", "#", "M"], 
      ["#", "#", "-", "#", "M"], 
-     ["#", "-", "-", ".", "M"], 
+     ["#", "B", "-", ".", "M"], 
      ["#", "#", "-", "#", "M"], 
      [" ", "#", "#", "#", "M"]
      ]
