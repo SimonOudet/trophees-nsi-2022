@@ -144,12 +144,12 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
             if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == ".") :
                 door_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
 
-def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int, previous = (0, 0)) :
+def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """
     
     """
-    #if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
-        #return
+    if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
+        return
     x_ideal = x_finish_position - x_departur_position
     y_ideal = y_finish_position - y_departur_position
     ideals = []
@@ -188,14 +188,16 @@ def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_p
     for posibility in path_posibility :
         x = x_departur_position + posibility[0]
         y = y_departur_position + posibility[1]
-        if (x == x_finish_position) and (y == y_finish_position) :
-            return
-        #if (stage[x][y] == "_") and (posibility != previous) :
-            #return path(stage, x_finish_position, y_finish_position, x, y, posibility)
+        if (stage[x][y] == "_") :
+            #for line_stage in range (len (stage)) :
+                #for column_stage in range (len (stage[line_stage])) :
+                    #print (stage[line_stage][column_stage], end=" ")
+                #print("")
+            return path(stage, x, y, x_finish_position, y_finish_position)
         if (stage[x][y] == " ") :
             stage[x][y] = "_"
-            return path(stage, x_finish_position, y_finish_position, x, y, posibility)
-        
+            return path(stage, x, y, x_finish_position, y_finish_position)
+       
      
 
 ########principal########
@@ -203,8 +205,10 @@ def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_p
 #size = 6
 #table = [[[" ", "#", " ", "#"], [" ", "#", "#", "#"], ["#", "#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"], ["#", "#", " "]]]
 #for this test the size must biger than 4.
-size = 18 * 2
+#size = 18 * 2
+size = 23 * 2
 # " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground, "B" = boss, "_" = path
+'''
 table = [
     [
      ["#", "#", "#", "#", "#"], 
@@ -249,6 +253,61 @@ table = [
      ["#", "B", "-", ".", "M"], 
      ["#", "#", "-", "#", "M"], 
      [" ", "#", "#", "#", "M"]
+     ]
+    ]
+'''
+table = [
+    [
+     ["M", "M", "M", "M", "M", "M", "M"], 
+     ["M", "#", "#", "#", "#", "#", "M"], 
+     ["M", "#", "-", "B", "-", "#", "M"], 
+     ["M", "#", "-", "-", "-", "#", "M"], 
+     ["M", "#", "-", "-", "-", "#", "M"], 
+     ["M", "#", "#", ".", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M", "M"]
+     ], 
+    [
+     ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+     ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
+     ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
+     ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
+     ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
+     ], 
+    [
+     ["M", "M", "M", "M", "M", "M"], 
+     ["M", " ", "#", "#", "#", "M"], 
+     ["M", "#", "#", "-", "#", "M"], 
+     ["M", "#", "-", "-", ".", "M"], 
+     ["M", "#", "#", "B", "#", "M"], 
+     ["M", " ", "#", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M"]
+     ], 
+    [
+     ["M", "M", "M", "M", "M", "M", "M"], 
+     ["M", "#", "#", "#", "#", "#", "M"], 
+     ["M", "#", "-", "B", "-", "#", "M"], 
+     ["M", "#", "-", "-", "-", "#", "M"], 
+     ["M", "#", "-", "-", "-", "#", "M"], 
+     ["M", "#", "#", ".", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M", "M"]
+     ], 
+    [
+     ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+     ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
+     ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
+     ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
+     ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
+     ], 
+    [
+     ["M", "M", "M", "M", "M", "M"], 
+     ["M", " ", "#", "#", "#", "M"], 
+     ["M", "#", "#", "-", "#", "M"], 
+     ["M", "#", "-", "-", ".", "M"], 
+     ["M", "#", "#", "B", "#", "M"], 
+     ["M", " ", "#", "#", "#", "M"], 
+     ["M", "M", "M", "M", "M", "M"]
      ]
     ]
 stage_generator (size, table)
