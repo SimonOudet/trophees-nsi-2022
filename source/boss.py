@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sequence
 import entity
 import pygame
@@ -7,11 +9,12 @@ class Boss (entity.Entity) :
         """
         Basic constructor of a boss object
         
-        input : - anim : a list of all Surface used for the animation \n
-                - times : a list of all times (in ms) of all frame of the animation \n
-                - coord : the coordinates of the top left corner \n
-                - hp : starting health points \n
-                - sequence : the fight sequence
+        input :
+            - anim : a list of all Surface used for the animation
+            - times : a list of all times (in ms) of all frame of the animation
+            - coord : the coordinates of the top left corner
+            - hp : starting health points
+            - sequence : the fight sequence
         """
         super ().__init__ (anim, times, "B", coord, hp)
         self.sequence = sequence
@@ -25,7 +28,8 @@ class Boss (entity.Entity) :
         Used when the player is fighting against
         this boss and when it's her turn
 
-        input : - map : a double array wich represent a map of the level (see Level class)
+        input :
+            - map : a double array wich represent a map of the level (see Level class)
         """
         if (self.is_active) :
             self.music_time = self.music_clock.tick ()
@@ -42,7 +46,8 @@ class Boss (entity.Entity) :
         """
         Make an attack against all of the given coordinates
 
-        input : - map : the level representation \n
-                - dest : a list of coordinates
+        input :
+            - map : the level representation
+            - dest : a list of coordinates
         """
         pass

@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import sequence
 import pygame
 import player
+import stage
 import video
 import level
 import boss
@@ -10,8 +13,9 @@ def init ()->list :
     """
     The game initialization function
 
-    output : - the screen representation with a Video object \n
-             - the level representation with a Level object
+    output :
+        - the screen representation with a Video object
+        - the level representation with a Level object
     """
     pygame.init ()
 
@@ -19,7 +23,7 @@ def init ()->list :
     current_level = level.Level (generate_map (20, 20), player.Player (video.Video.load_animation ("test", 1), [1000], (5, 5), 20), [boss.Boss (video.Video.load_animation ("test", 1), [1000], (11, 5), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000]))], [])
 
     # video
-    screen = video.Video (2 / 3)
+    screen = video.Video (2 / 3, len (current_level.get_map ()[0]))
 
     return screen, current_level
 
@@ -28,20 +32,70 @@ def generate_map (w:int, h:int)->list :
     Genre a double array wich represent the map
     of the current level
     
-    input : - w : the width of the map \n
-            - h : the height of the map \n
-    output : - a double array wich represent the map
+    input : 
+        - w : the width of the map
+        - h : the height of the map
+    output :
+        - a double array wich represent the map
     """
-    return [[" ", " ", " ", " ", "#", "#", "#", "#", "#", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", "#", "-", "-", "-", "#", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", "#", "-", "-", "-", "#", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", "#", "-", "-", "-", "#", " ", " ", "#", "#", "#", "#", "#", "#", "#"],
-            [" ", " ", " ", "#" ,"#", "#", "-", "#", "#", "#", "#", "#", "-", "#", "-", "-", "-", "#"],
-            [" ", " ", " ", "#", "-", "-", "-", "-", "-", "#", "#", "-", "-", "-", "-", "-", "-", "#"],
-            ["#", "#", "#", "#", "-", "#", "#", "#", "-", "-", "#", "#", "-", "#", "-", "-", "#", "#"],
-            ["#", "-", "-", "-", "-", "-", "#", "#", "#", "-", "#", "#", "#", "#", "-", "#", "#", " "],
-            ["#", "-", "-", "-", "-", "-", "#", " ", "#", "-", "-", "-", "-", "-", "-", "#", " ", " "],
-            ["#", "#", "#", "#", "#", "#", "#", " ", "#", "#", "#", "#", "#", "#", "#", "#", " ", " "]]
+    level = stage.stage_generator (23 * 2,
+    [
+        [
+        ["M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", "-", "B", "-", "#", "M"], 
+        ["M", "#", "-", "-", "-", "#", "M"], 
+        ["M", "#", "-", "-", "-", "#", "M"], 
+        ["M", "#", "#", ".", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M"]
+        ], 
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
+        ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
+        ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ], 
+        [
+        ["M", "M", "M", "M", "M", "M"], 
+        ["M", " ", "#", "#", "#", "M"], 
+        ["M", "#", "#", "-", "#", "M"], 
+        ["M", "#", "-", "-", ".", "M"], 
+        ["M", "#", "#", "B", "#", "M"], 
+        ["M", " ", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M"]
+        ], 
+        [
+        ["M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", "-", "B", "-", "#", "M"], 
+        ["M", "#", "-", "-", "-", "#", "M"], 
+        ["M", "#", "-", "-", "-", "#", "M"], 
+        ["M", "#", "#", ".", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M"]
+        ], 
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
+        ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
+        ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ], 
+        [
+        ["M", "M", "M", "M", "M", "M"], 
+        ["M", " ", "#", "#", "#", "M"], 
+        ["M", "#", "#", "-", "#", "M"], 
+        ["M", "#", "-", "-", ".", "M"], 
+        ["M", "#", "#", "B", "#", "M"], 
+        ["M", " ", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M"]
+        ]
+    ])[0] # !TO CHANGE!
+    #for i in level :
+    #    print (i)
+    return level
 
 screen, current_level = init ()
 key_cooldown = {97:False, 100:False, 119:False, 115:False}

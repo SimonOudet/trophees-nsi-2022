@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import drawable
 
 class Entity (drawable.Drawable) :
@@ -5,11 +7,12 @@ class Entity (drawable.Drawable) :
         """
         Basic constructor of a entity object
         
-        input : - anim : a list of all Surface used for the animation \n
-                - times : a list of all times (in ms) of all frame of the animation \n
-                - ID : unique identifier \n
-                - coord : the coordinates of the top left corner \n
-                - hp : starting health points
+        input :
+            - anim : a list of all Surface used for the animation
+            - times : a list of all times (in ms) of all frame of the animation
+            - ID : unique identifier
+            - coord : the coordinates of the top left corner
+            - hp : starting health points
         """
         super ().__init__ (anim, times, ID, coord)
         self.hp = hp
@@ -18,7 +21,8 @@ class Entity (drawable.Drawable) :
         """
         Return the current amount of healt points
         
-        output : - the current amount of healt points
+        output :
+            - the current amount of healt points
         """
         return self.hp
 
@@ -26,7 +30,8 @@ class Entity (drawable.Drawable) :
         """
         Change the current amount of healt points
         
-        input : - val : the new value
+        input :
+            - val : the new value
         """
         self.hp = val
     
@@ -35,7 +40,8 @@ class Entity (drawable.Drawable) :
         Increase the current amount of healt points
         (use negative values for a decrease)
         
-        input : - val : the value to add
+        input :
+            - val : the value to add
         """
         self.hp += val
 
@@ -43,8 +49,9 @@ class Entity (drawable.Drawable) :
         """
         Move the entity
         
-        input : - coor : the coordinates that will increase the currents coordinates \n
-                - map : the level representation
+        input :
+            - coor : the coordinates that will increase the currents coordinates
+            - map : the level representation
         """
         x = self.coord [0] + coor [0]
         y = self.coord [1] + coor [1]
@@ -56,8 +63,9 @@ class Entity (drawable.Drawable) :
         """
         Chnage the position of the entity
         
-        input : - coor : the new coordinates \n
-                - map : the level representation
+        input :
+            - coor : the new coordinates
+            - map : the level representation
         """
         size = (len (map[0]), len (map))
         if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] == "-") :
