@@ -99,7 +99,7 @@ def generate_map (w:int, h:int)->list :
 
 screen, current_level = init ()
 key_cooldown = {97:False, 100:False, 119:False, 115:False}
-played = False # if we have to resolve player action
+played = False # if we have to resolve the player action
 
 # main loop
 while True :
@@ -141,13 +141,11 @@ while True :
                 current_level.get_player ().move ((0, 1), current_level.get_map ())
                 played = True
                 key_cooldown[115] = True
-    
-    if (played) :                                       # we have to resolve player action
-        played = False
 
     # pulse
     for p in current_level.get_pulsable () :
-        p.pulse (current_level.get_map ())
+        p.pulse (current_level.get_map (), played)
+    played = False
 
     # animation
     screen.cancel ()
