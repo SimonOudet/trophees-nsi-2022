@@ -6,6 +6,7 @@ import drawable
 import monster
 import player
 import video
+import algo
 
 class Level :
     def __init__ (self, map:list, player:player.Player, monsters:list, loots:list) :
@@ -109,6 +110,15 @@ class Level :
         """
         self.monsters [i] = monster
 
+    def add_monsters (self, monsters:list) :
+        """
+        Add some monsters to the level
+        
+        input :
+            - monsters : a list of monsters objects
+        """
+        self.monsters += monsters
+
     def get_loots (self)->list :
         """
         Get all the loots of this level
@@ -146,8 +156,9 @@ class Level :
         output :
             - all the drawable object of this level
         """
-        return self.environment  + self.monsters + [self.player] # !CHANGE!
-        #return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if ma.is_in_square (player_pos, 5, i.get_pos (), True, self.dicover)] + self.monsters + [self.player] # !CHANGE!
+        player_vision = []
+        algo.manatan_vision (5, self.map, player_pos, player_vision, self.dicover)
+        return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.monsters + [self.player] # !CHANGE!
 
     def get_pulsable (self)->list :
         """

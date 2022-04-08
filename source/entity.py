@@ -45,19 +45,23 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
-    def move (self, coor:tuple, map:list) :
+    def move (self, coor:tuple, map:list)->bool :
         """
         Move the entity
         
         input :
             - coor : the coordinates that will increase the currents coordinates
             - map : the level representation
+        output :
+            - if we have change our position
         """
         x = self.coord [0] + coor [0]
         y = self.coord [1] + coor [1]
         size = (len (map[0]), len (map))
-        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] == "-") :
+        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") :
             self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+            return True
+        return False
     
     def go_to (self, coor:tuple, map:list) :
         """

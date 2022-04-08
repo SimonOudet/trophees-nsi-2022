@@ -20,10 +20,13 @@ def init ()->list :
     pygame.init ()
 
     # level genreration
-    current_level = level.Level (generate_map (20, 20), player.Player (video.Video.load_animation ("test", 1), [1000], (5, 5), 20), [boss.Boss (video.Video.load_animation ("test", 1), [1000], (11, 5), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000]))], [])
+    map, bosses = generate_map (20, 20)
+    current_level = level.Level (map, player.Player (video.Video.load_animation ("test", 1), [1000], (bosses[0][1], bosses[0][0]), 20), [], [])
+    # add the bosses
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation ("test", 1), [1000], (c[1], c[0]), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
 
     # video
-    screen = video.Video (2 / 3, len (current_level.get_map ()[0]))
+    screen = video.Video (2 / 3, (bosses[0][1], bosses[0][0]))
 
     return screen, current_level
 
@@ -38,7 +41,7 @@ def generate_map (w:int, h:int)->list :
     output :
         - a double array wich represent the map
     """
-    level = stage.stage_generator (23 * 2,
+    return stage.stage_generator (23 * 2,
     [
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
@@ -92,10 +95,10 @@ def generate_map (w:int, h:int)->list :
         ["M", " ", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M"]
         ]
-    ])[0] # !TO CHANGE!
+    ]) # !TO CHANGE!
     #for i in level :
     #    print (i)
-    return level
+    # return level, boss
 
 screen, current_level = init ()
 key_cooldown = {97:False, 100:False, 119:False, 115:False}
@@ -117,28 +120,36 @@ while True :
             if (key_cooldown[97]) :
                 key_cooldown[97] = False
             else :
-                current_level.get_player ().move ((-1, 0), current_level.get_map ())
+                dir = (-1, 0)
+                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                    screen.move_origin (dir)
                 played = True
                 key_cooldown[97] = True
         elif (pygame.key.get_pressed ()[100]) :        # right
             if (key_cooldown[100]) :
                 key_cooldown[100] = False
             else :
-                current_level.get_player ().move ((1, 0), current_level.get_map ())
+                dir = (1, 0)
+                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                    screen.move_origin (dir)
                 played = True
                 key_cooldown[100] = True
         elif (pygame.key.get_pressed ()[119]) :        # top
             if (key_cooldown[119]) :
                 key_cooldown[119] = False
             else :
-                current_level.get_player ().move ((0, -1), current_level.get_map ())
+                dir = (0, -1)
+                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                    screen.move_origin (dir)
                 played = True
                 key_cooldown[119] = True
         elif (pygame.key.get_pressed ()[115]) :        # bottom
             if (key_cooldown[115]) :
                 key_cooldown[115] = False
             else :
-                current_level.get_player ().move ((0, 1), current_level.get_map ())
+                dir = (0, 1)
+                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                    screen.move_origin (dir)
                 played = True
                 key_cooldown[115] = True
 

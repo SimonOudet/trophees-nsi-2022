@@ -103,8 +103,6 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     #    print("")
     
     return stage, boss_position
-    
-    
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """

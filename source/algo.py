@@ -27,7 +27,7 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
     """
     if (src == dst) :
         return True
-    for node in get_neighbours (src, map) :
+    for node in get_diag_neighbours (src, map) :
         if (map[node[1]][node[0]] == "#") or (node in closed) :
             continue
         elif (node in open) : # refresh
@@ -51,6 +51,25 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
 def get_neighbours (coor:tuple, map:list)-> list :
     """
     Return the neighbours of the given coordinates
+    
+    input :
+        - coor : the coordinates
+        - map : the map
+    output :
+        - a list with all cordinates of all neighbours
+    """
+    nei = []
+    for x in [coor[0] - 1, coor[0] + 1] :
+        if is_in_map ((x, coor[1]), map) :
+            nei.append ((x, coor[1]))
+    for y in [coor[1] - 1, coor[1] + 1] :
+        if is_in_map ((coor[0], y), map) :
+            nei.append ((coor[0], y))
+    return nei
+
+def get_diag_neighbours (coor:tuple, map:list)-> list :
+    """
+    Return the neighbours of the given coordinates (with diagonales)
     
     input :
         - coor : the coordinates
@@ -88,9 +107,9 @@ def get_quality (src:tuple, test:tuple, dst:tuple)-> int :
     output :
         - the quality
     """
-    return manathan (test, src) + manathan (test, dst)
+    return manatan (test, src) + manatan (test, dst)
 
-def manathan (a:tuple, b:tuple)-> int :
+def manatan (a:tuple, b:tuple)-> int :
     """
     Return manathan distance between a and b
     
@@ -101,6 +120,26 @@ def manathan (a:tuple, b:tuple)-> int :
         - the distance
     """
     return abs (a[0] - b[0]) + abs (a[1] - b[1])
+
+def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict) :
+    """
+    Return a list wich represent the vision
+    
+    input :
+        - n : the manatan width
+        - map : the map
+        - coor : the root coor
+        - coors : the coordinates wich represent the vision
+        - discover : the list of the discovered place
+    """
+    discover[coor] = True
+    if (coor not in coors) :
+        coors.append (coor)
+    if (n == 0) :
+        return
+    for ne in get_neighbours (coor, map) :
+        if (map[ne[1]][ne[0]] != "#") :
+            manatan_vision (n - 1, map, ne, coors, discover)
 
 def get_path (dict:dict, src:tuple)-> list :
     """
