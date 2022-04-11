@@ -121,7 +121,7 @@ def manatan (a:tuple, b:tuple)-> int :
     """
     return abs (a[0] - b[0]) + abs (a[1] - b[1])
 
-def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict) :
+def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from_wall=False) :
     """
     Return a list wich represent the vision
     
@@ -131,15 +131,18 @@ def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict) :
         - coor : the root coor
         - coors : the coordinates wich represent the vision
         - discover : the list of the discovered place
+        - from_wall : if the origin is a wall
     """
     discover[coor] = True
     if (coor not in coors) :
         coors.append (coor)
-    if (n == 0) :
+    if (n == 0) or from_wall :
         return
     for ne in get_neighbours (coor, map) :
         if (map[ne[1]][ne[0]] != "#") :
-            manatan_vision (n - 1, map, ne, coors, discover)
+            manatan_vision (n - 1, map, ne, coors, discover, False)
+        else :
+            manatan_vision (n - 1, map, ne, coors, discover, True)
 
 def get_path (dict:dict, src:tuple)-> list :
     """

@@ -23,7 +23,7 @@ class Boss (entity.Entity) :
         self.current_action = sequence.get_action_time ()       # the action, the time
         self.is_active = False                                  # if the Boss is fighting
     
-    def pulse (self, map:list, played:bool, player_pos:tuple):
+    def pulse (self, map:list, played:bool):
         """
         Used when the player is fighting against
         this boss and when it's her turn
@@ -31,7 +31,6 @@ class Boss (entity.Entity) :
         input :
             - map : a double array wich represent a map of the level (see Level class)
             - played : if we have to resolve the player action
-            - player_pos : the player position
         """
         if (self.is_active) :
             self.music_time = self.music_clock.tick ()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import general as ge
 import sequence
 import pygame
 import player
@@ -21,9 +22,9 @@ def init ()->list :
 
     # level genreration
     map, bosses = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation ("test", 1), [1000], (bosses[0][1], bosses[0][0]), 20), [], [])
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, (bosses[0][1], bosses[0][0]), 20), [], [])
     # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation ("test", 1), [1000], (c[1], c[0]), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, (c[1], c[0]), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
 
     # video
     screen = video.Video (2 / 3, (bosses[0][1], bosses[0][0]))

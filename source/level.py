@@ -34,12 +34,15 @@ class Level :
         self.hiden_environment = []
         for i in range (len (self.map)) :
             for j in range (len (self.map[i])) :
-                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "B") or (self.map[i][j] == ".") : # ground
+                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "B") : # ground
                     self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
                     self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == "#") : # wall
                     self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
                     self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_not_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+                elif (self.map[i][j] == ".") : # door
+                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
         self.dicover = {i.get_pos ():False for i in self.environment}
 
     def get_map (self)->list :
