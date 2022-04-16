@@ -4,9 +4,11 @@ import general as ge
 import sequence
 import pygame
 import player
+import stray
 import stage
 import video
 import level
+import time
 import boss
 import sys
 
@@ -22,12 +24,15 @@ def init ()->list :
 
     # level genreration
     map, bosses = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, (bosses[0][1], bosses[0][0]), 20), [], [])
+    print (bosses)
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, bosses[0], 20), [], [])
     # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, (c[1], c[0]), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, c, 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
+    # add the vagabonds
+    current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, bosses[1], 20, current_level.get_player ())])
 
     # video
-    screen = video.Video (2 / 3, (bosses[0][1], bosses[0][0]))
+    screen = video.Video (2 / 3, bosses[0])
 
     return screen, current_level
 
@@ -165,3 +170,4 @@ while True :
         surf, coor = d.draw ()
         screen.add (surf, coor)
     screen.refresh ()
+    time.sleep (0.01)

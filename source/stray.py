@@ -7,6 +7,7 @@ import algo
 class Stray (monster.Monster) :
     
     def __init__(self, anim, times, coord, hp, player) :
+        print (coord)
         super().__init__(anim, times, coord, hp)
         self.player = player
         self.agro = False
@@ -21,12 +22,18 @@ class Stray (monster.Monster) :
             - played : if we have to resolve the player action
         """
         if played == True :
+            print (self.agro)
             if self.agro :
-                self.coord = algo.a_star_path(self.map, self.coord, self.player)[0]
+                self.coord = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
             else :
                 posibilities = [(0, 1), (0, -1), (1, 0), (-1, 0)]
                 random.shuffle(posibilities)
-                coordonnee = posibilities.pop()
-                while not(algo.is_in_map(coordonnee, self.map)) and (self.map[coordonnee[0]][coordonnee[1]] != "_") :
-                    coordonnee = posibilities.pop()
+                direction = posibilities.pop()
+                coordonnee = (self.coord[0] + direction[0], self.coord[1] + direction[1])
+                while not(algo.is_in_map(coordonnee, map)) or (map[coordonnee[1]][coordonnee[0]] == "#") :
+                    direction = posibilities.pop()
+                    coordonnee = (self.coord[0] + direction[0], self.coord[1] + direction[1])
                 self.coord = coordonnee
+                vision = []
+                algo.manatan_vision (4, map, self.coord, vision, {})
+                self.agro = self.player.get_pos () in vision

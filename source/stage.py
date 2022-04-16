@@ -106,7 +106,7 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """
-    function that checks if the boss’s room to generate meets colision
+    function that checks if the boss's room to generate meets colision
     
     input :
         - boss_rooms : it's the matrice that represent the boss room
@@ -130,15 +130,15 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
         - boss_rooms : it's the matrice that represent the boss room
         - stage : this is the stage that the function will modify 
         - x_starting_coordinate,  y_starting_coordinate : the angle coordinate of the boss room
-        - boss_position voir fonction stage_generator
-        - door_position voir fonction stage_generator
+        - boss_position see function stage_generator
+        - door_position see function stage_generator
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
             if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == " ") and (boss_rooms[line][column] != " ") :
                 stage[line + x_starting_coordinate][column + y_starting_coordinate] = boss_rooms[line][column]
             if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == "B") :
-                boss_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
+                boss_position.append((column + y_starting_coordinate, line + x_starting_coordinate)) # for compatibility
             if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == ".") :
                 door_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
 
