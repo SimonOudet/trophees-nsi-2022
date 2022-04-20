@@ -24,8 +24,7 @@ def init ()->list :
 
     # level genreration
     map, bosses = generate_map (20, 20)
-    print (bosses)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, bosses[0], 20), [], [])
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, bosses[4], 20), [], [])
     # add the bosses
     current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, c, 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
     # add the vagabonds
@@ -47,8 +46,23 @@ def generate_map (w:int, h:int)->list :
     output :
         - a double array wich represent the map
     """
-    return stage.stage_generator (23 * 2,
+    return stage.stage_generator (60 * 2,
     [
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "B", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", ".", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ],
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
@@ -57,7 +71,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "-", "-", "-", "#", "M"], 
         ["M", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M"]
-        ], 
+        ],
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 

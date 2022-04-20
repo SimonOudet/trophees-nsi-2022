@@ -7,7 +7,6 @@ import algo
 class Stray (monster.Monster) :
     
     def __init__(self, anim, times, coord, hp, player) :
-        print (coord)
         super().__init__(anim, times, coord, hp)
         self.player = player
         self.agro = False
@@ -22,7 +21,6 @@ class Stray (monster.Monster) :
             - played : if we have to resolve the player action
         """
         if played == True :
-            print (self.agro)
             if self.agro :
                 self.coord = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
             else :
