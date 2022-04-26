@@ -157,3 +157,19 @@ def get_path (dict:dict, src:tuple)-> list :
     if (dict[src] == None) :
         return [src]
     return get_path (dict, dict[src]) + [src]
+
+def search_drawable (drawables:list, coords:tuple)-> int :
+    """
+    Search in a given list of Drawable object
+    the index of the Drawable with the coords coordinates
+    
+    input :
+        - drawables : the drawables list
+        - coords : the coordinates to find
+    output :
+        - the index if the object is in drawables, -1 if not
+    """
+    for i in range (len (drawables)) :
+        if (drawables[i].get_pos () == coords) :
+            return i
+    return -1

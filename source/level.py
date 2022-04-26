@@ -23,6 +23,7 @@ class Level :
         """
         self.map = map
         self.load_map ()
+        self.dicover = {i.get_pos ():False for i in self.environment}
         self.player = player
         self.bosses = bosses
         self.vags = vags
@@ -46,7 +47,26 @@ class Level :
                 elif (self.map[i][j] == ".") : # door
                     self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
                     self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
-        self.dicover = {i.get_pos ():False for i in self.environment}
+
+    def update_map (self, x:int, y:int) :
+        """
+        A load map like function but optimized
+        for a little change and only for ground
+        changing in the boss context
+        
+        input :
+            - x : the x coordinate
+            - y : the y coordinate
+        """
+        i = algo.search_drawable (self.environment, (x, y))
+        # an adding :
+        if (i == -1) :
+            self.environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
+            self.hiden_environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
+        # a removing
+        else :
+            self.environment.pop (i)
+            self.hiden_environment.pop (i)
 
     def get_map (self)->list :
         """
@@ -77,7 +97,7 @@ class Level :
             - val : the new value of this place
         """
         self.map [y][x] = val
-        self.load_map () # ! CHANGE !
+        self.update_map (x, y) # ! CHANGE !
     
     def get_player (self)->player.Player :
         """
