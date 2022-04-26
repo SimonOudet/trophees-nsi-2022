@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import collections as co
+
 class Sequence :
     def __init__ (self, actions:list, times:list) :
         """

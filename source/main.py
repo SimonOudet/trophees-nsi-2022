@@ -23,15 +23,15 @@ def init ()->list :
     pygame.init ()
 
     # level genreration
-    map, bosses = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, bosses[4], 20), [], [])
+    map, rooms = generate_map (20, 20)
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[4].get_boss_position (), 20), [], [], [])
     # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, c, 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in bosses[1:]]) # !CHANGE!
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_door_position (), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in range (len (rooms))], True) # !CHANGE!
     # add the vagabonds
-    current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, bosses[1], 20, current_level.get_player ())])
+    current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[1].get_boss_position (), 20, current_level.get_player ())])
 
     # video
-    screen = video.Video (2 / 3, bosses[0])
+    screen = video.Video (2 / 3, rooms[4].get_boss_position ())
 
     return screen, current_level
 
@@ -59,9 +59,10 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", ".", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", ".", "-", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
@@ -120,6 +121,9 @@ def generate_map (w:int, h:int)->list :
     #    print (i)
     # return level, boss
 
+def load_seq (name, i) :
+    pass
+
 screen, current_level = init ()
 key_cooldown = {97:False, 100:False, 119:False, 115:False}
 played = False # if we have to resolve the player action
@@ -141,7 +145,7 @@ while True :
                 key_cooldown[97] = False
             else :
                 dir = (-1, 0)
-                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
                     screen.move_origin (dir)
                 played = True
                 key_cooldown[97] = True
@@ -150,7 +154,7 @@ while True :
                 key_cooldown[100] = False
             else :
                 dir = (1, 0)
-                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
                     screen.move_origin (dir)
                 played = True
                 key_cooldown[100] = True
@@ -159,7 +163,7 @@ while True :
                 key_cooldown[119] = False
             else :
                 dir = (0, -1)
-                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
                     screen.move_origin (dir)
                 played = True
                 key_cooldown[119] = True
@@ -168,7 +172,7 @@ while True :
                 key_cooldown[115] = False
             else :
                 dir = (0, 1)
-                if (current_level.get_player ().move (dir, current_level.get_map ())) : # the player has moved
+                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
                     screen.move_origin (dir)
                 played = True
                 key_cooldown[115] = True

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import general
 import random
 
 def stage_generator (stage_size:int, table_boss_rooms:list)->list :
@@ -23,34 +24,48 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
           randomly generated on the floor
         - boss_position = [(x, y), ...]
 
-    """ 
-    boss_position = []
-    door_position = []
+    """
+    rooms = []
     stage = [[" "] * (stage_size * 2) for i in range (stage_size * 2)]
+
+    # placement and creation of each room
     for boss_room in table_boss_rooms :
-        compass = random.choice(["north", "south", "east", "west"])
+        rooms.append (general.Room ())                                                      # this object represent the room data       
+        compass = random.choice(["north", "south", "east", "west"])                         # random orientation choice
         #print(compass)
+        # creation of the room
         if (compass == "north") :
-            new_boss_room = [[None] * len (boss_room[i]) for i in range (len (boss_room))]
+            # 180 degres
+            rooms[-1].set_orientation ((False, (-1, -1)))
+            new_boss_room = [[None] * len (boss_room[i]) for i in range (len (boss_room))]  # the boss room array, 180 degres = same dimenssion
             for line in range (len (boss_room)) :
                 for column in range (len (boss_room[line])) :
                     new_boss_room[len (boss_room) - 1 - line][len (boss_room[line]) - 1 - column] = boss_room[line][column]
         
         elif (compass == "east") :
-            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))]
+            # 90 degres
+            rooms[-1].set_orientation ((True, (1, -1)))
+            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 90 degres = swap the width and the height
             for line in range (len (boss_room)) :
                 for column in range (len (boss_room[line])) :
                     new_boss_room[len (boss_room[line]) - 1 - column][line] = boss_room[line][column]
         
         elif (compass == "west") :
-            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))]
+            # 270 degres
+            rooms[-1].set_orientation ((True, (-1, 1)))
+            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 270 degres = swap the width and the height
             for line in range (len (boss_room)) :
                 for column in range (len (boss_room[line])) :
                     new_boss_room[column][len (boss_room) - 1 - line] = boss_room[line][column]
         
         else :
+            # 0 or 360 degres
+            rooms[-1].set_orientation ((False, (1, 1)))
             new_boss_room = boss_room
         
+        # placement of the room
+
+        # searching of a whole place
         x_starting = random.randint (4, (stage_size + 4))
         y_starting = random.randint (4, (stage_size + 4))
         
@@ -62,11 +77,13 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
             if (y_starting > stage_size + 4) :
                 y_starting = random.randint (4, (stage_size + 4))
         
-        room_generator (new_boss_room, stage, x_starting, y_starting, boss_position, door_position)
+        # placement
+        room_generator (new_boss_room, stage, x_starting, y_starting, rooms)
         #for elt in stage :
             #print (elt)
         #print ("")
-        
+    
+    # switching the doormate to void
     for line_stage in range (len (stage)) :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "M") :
@@ -74,24 +91,27 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
             #print (stage[line_stage][column_stage], end=" ")
         #print("")
     
-    family = {door_position[i]:i for i in range (len (door_position))}
-    while sum(family.values()) != 0 :
-        departur_door = door_position[random.randint(0, len(door_position) - 1)]
-        door_index = random.randint(0, len(door_position) - 1)
-        finish_door = door_position[door_index]
-        while (family[finish_door] == family[departur_door]) :
+    # creation of the paths
+    family = {rooms[i].get_door_position ():i for i in range (len (rooms))}
+    while sum(family.values()) != 0 :                                                       # while each rooms are not in the same family
+        departur_door = rooms[random.randint(0, len(rooms) - 1)].get_door_position ()       # starting room
+        door_index = random.randint(0, len(rooms) - 1)
+        finish_door = rooms[door_index].get_door_position ()                                # ending room
+        while (family[finish_door] == family[departur_door]) :                              # if the starting and the ending room are frome the same family 
             door_index += 1
-            if (door_index >= len (door_position)) :
+            if (door_index >= len (rooms)) :
                 door_index = 0
-            finish_door = door_position[door_index]
-        path(stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])
-        for position in door_position :
-            if (family[position] == max (family[departur_door], family[finish_door])) :
-                family[position] = min (family[departur_door], family[finish_door])
+            finish_door = rooms[door_index].get_door_position ()
+        path (stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])    # creation of the path
+        for position in range (len (rooms)) :                                               # all the soons of departur_door and finish_door cone from the same family
+            if (family[rooms[position].get_door_position ()] == max (family[departur_door], family[finish_door])) :
+                family[rooms[position].get_door_position ()] = min (family[departur_door], family[finish_door])
     
+    # creation of the wall
     for line_stage in range (len (stage)) :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "_") :
+                # a 3 * 3 square
                 for i in range (-1, 2) :
                     for j in range (-1, 2) :
                         if (stage[line_stage + i][column_stage + j] == " ") :
@@ -102,7 +122,7 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     #        print (stage[line_stage][column_stage], end=" ")
     #    print("")
     
-    return stage, boss_position
+    return stage, rooms
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """
@@ -118,11 +138,12 @@ def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_sta
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
-            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] != " ") and (boss_rooms[line][column] != " "):
+            # if this coordinate is not void AND if it's problematic
+            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] != " ") and (boss_rooms[line][column] != " "):
                 return False
     return True
 
-def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int, boss_position:list, door_position:list) :
+def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int, rooms:general.Room) :
     """
     function that generates a boss room on the stage
     
@@ -135,12 +156,12 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
-            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == " ") and (boss_rooms[line][column] != " ") :
-                stage[line + x_starting_coordinate][column + y_starting_coordinate] = boss_rooms[line][column]
-            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == "B") :
-                boss_position.append((column + y_starting_coordinate, line + x_starting_coordinate)) # for compatibility
-            if (stage[line + x_starting_coordinate][column + y_starting_coordinate] == ".") :
-                door_position.append((line + x_starting_coordinate, column + y_starting_coordinate))
+            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == " ") and (boss_rooms[line][column] != " ") :
+                stage[line + y_starting_coordinate][column + x_starting_coordinate] = boss_rooms[line][column]
+            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "B") :
+                rooms[-1].set_boss_position((column + x_starting_coordinate, line + y_starting_coordinate))
+            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == ".") :
+                rooms[-1].set_door_position((column + x_starting_coordinate, line + y_starting_coordinate))
 
 def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """
@@ -186,14 +207,14 @@ def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_p
     for posibility in path_posibility :
         x = x_departur_position + posibility[0]
         y = y_departur_position + posibility[1]
-        if (stage[x][y] == "_") :
+        if (stage[y][x] == "_") :
             #for line_stage in range (len (stage)) :
                 #for column_stage in range (len (stage[line_stage])) :
                     #print (stage[line_stage][column_stage], end=" ")
                 #print("")
             return path(stage, x, y, x_finish_position, y_finish_position)
-        if (stage[x][y] == " ") :
-            stage[x][y] = "_"
+        if (stage[y][x] == " ") :
+            stage[y][x] = "_"
             return path(stage, x, y, x_finish_position, y_finish_position)
        
      

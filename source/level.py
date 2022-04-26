@@ -5,24 +5,28 @@ import general as ge
 import drawable
 import monster
 import player
+import stray
 import video
+import boss
 import algo
 
 class Level :
-    def __init__ (self, map:list, player:player.Player, monsters:list, loots:list) :
+    def __init__ (self, map:list, player:player.Player, bosses:list, vags:list, loots:list) :
         """
         Basic constructor of a Level object
         
         input :
             - map : a double array wich represent a map of the level ! TO COMPLETE !
             - player : the player of the level
-            - monsters : an array with all the monsters of the level
+            - bosses : an array with all the bosses of the level
+            - vags : an array with all the vagabonds of the level
             - loots : an array with all the loots of the level
         """
         self.map = map
         self.load_map ()
         self.player = player
-        self.monsters = monsters
+        self.bosses = bosses
+        self.vags = vags
         self.loots = loots
     
     def load_map (self) :
@@ -92,35 +96,65 @@ class Level :
         output :
             - a list with all monsters 
         """
-        return self.monsters
+        return self.vags + self.bosses
+    
+    def get_bosses (self)->list :
+        """
+        Get all the bosses of this level
+        
+        output :
+            - a list with all bosses 
+        """
+        return self.bosses
 
-    def set_monsters (self, monsters:list) :
+    def get_vagabonds (self)->list :
+        """
+        Get all the vagabonds of this level
+        
+        output :
+            - a list with all vagabonds 
+        """
+        return self.vag
+    
+    def set_monsters (self, monsters:list, are_bosses=False) :
         """
         Modify all the monsters of the level
         
         input :
             - monsters : the new list of the level monsters
+            - are_bosses : if the monsters are bosses
         """
-        self.monsters = monsters
+        if (are_bosses) :
+            self.bosses = monsters
+        else :
+            self.vags = monsters
 
-    def change_monster (self, i:int, monster:monster.Monster) :
+    def change_monster (self, i:int, monster:monster.Monster, is_boss=False) :
         """
         Modify a monster of this level
         
         input :
             - i : the number of te monster
             - monster : the new monster
+            - is_boss : if the monster is a boss
         """
-        self.monsters [i] = monster
+        if (is_boss) :
+            self.bosses [i] = monster
+        else :
+            self.vags [i] = monster
 
-    def add_monsters (self, monsters:list) :
+    def add_monsters (self, monsters:list, is_boss=False) :
         """
         Add some monsters to the level
         
         input :
             - monsters : a list of monsters objects
+            - is_boss : if the monster is a boss
         """
-        self.monsters += monsters
+        if (is_boss) :
+            self.bosses += monsters
+        else :
+            self.vags += monsters
 
     def get_loots (self)->list :
         """
@@ -161,7 +195,7 @@ class Level :
         """
         player_vision = []
         algo.manatan_vision (5, self.map, player_pos, player_vision, self.dicover)
-        return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.monsters + [self.player] # !CHANGE!
+        return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.bosses + self.vags + [self.player] # !CHANGE!
 
     def get_pulsable (self)->list :
         """
@@ -170,4 +204,4 @@ class Level :
         output :
             - all the pulsable object of this level
         """
-        return [self.player] + self.monsters
+        return [self.player] + self.vags + self.bosses

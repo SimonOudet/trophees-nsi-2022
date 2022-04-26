@@ -5,7 +5,7 @@ import entity
 import pygame
 
 class Boss (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, sequence:sequence.Sequence):
+    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence):
         """
         Basic constructor of a boss object
         
@@ -13,6 +13,7 @@ class Boss (entity.Entity) :
             - anim : a list of all Surface used for the animation
             - times : a list of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
+            - activ : the coordinates where the player agro the boss
             - hp : starting health points
             - sequence : the fight sequence
         """
@@ -22,6 +23,7 @@ class Boss (entity.Entity) :
         self.music_time = 0
         self.current_action = sequence.get_action_time ()       # the action, the time
         self.is_active = False                                  # if the Boss is fighting
+        self.activ = activ
     
     def pulse (self, map:list, played:bool):
         """
@@ -52,3 +54,13 @@ class Boss (entity.Entity) :
             - dest : a list of coordinates
         """
         pass
+
+    def get_activ (self)->tuple :
+        """
+        Return the activation coordinates
+        of the boss
+        
+        output :
+            - the coordinates
+        """
+        return self.activ

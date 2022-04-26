@@ -13,7 +13,7 @@ def a_star_path (map:list, src:tuple, dst:tuple)-> list :
     closed = {src:None}
     open = {}
     a_star (map, src, dst, closed, open)
-    return get_path (closed, dst)
+    return get_path (closed, dst) + [dst]
 
 def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
     """
@@ -121,7 +121,7 @@ def manatan (a:tuple, b:tuple)-> int :
     """
     return abs (a[0] - b[0]) + abs (a[1] - b[1])
 
-def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from_wall=False) :
+def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from_blind=False) :
     """
     Return a list wich represent the vision
     
@@ -131,15 +131,15 @@ def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from
         - coor : the root coor
         - coors : the coordinates wich represent the vision
         - discover : the list of the discovered place
-        - from_wall : if the origin is a wall
+        - from_blind : if the origin is a wall or a door (both of them stop vision)
     """
     discover[coor] = True
     if (coor not in coors) :
         coors.append (coor)
-    if (n == 0) or from_wall :
+    if (n == 0) or from_blind :
         return
     for ne in get_neighbours (coor, map) :
-        if (map[ne[1]][ne[0]] != "#") :
+        if (map[ne[1]][ne[0]] != "#") and (map[ne[1]][ne[0]] != ".") :
             manatan_vision (n - 1, map, ne, coors, discover, False)
         else :
             manatan_vision (n - 1, map, ne, coors, discover, True)

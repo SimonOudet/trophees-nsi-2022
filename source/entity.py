@@ -45,20 +45,21 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
-    def move (self, coor:tuple, map:list)->bool :
+    def move (self, coor:tuple, map:list, forbiden=())->bool :
         """
         Move the entity
         
         input :
             - coor : the coordinates that will increase the currents coordinates
             - map : the level representation
+            - forbiden : a tuple of tuple with positions forbiden
         output :
             - if we have change our position
         """
         x = self.coord [0] + coor [0]
         y = self.coord [1] + coor [1]
         size = (len (map[0]), len (map))
-        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") :
+        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
             self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
             return True
         return False
