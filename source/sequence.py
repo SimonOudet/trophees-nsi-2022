@@ -3,28 +3,45 @@
 import collections as co
 
 class Sequence :
-    def __init__ (self, actions:list, times:list) :
+    def __init__ (self) :
         """
-        Basic constructor of a Sequence object
-        
-        input :
-            - actions : a list of actions
-            - times : the list of times (ms) for each action
+        Basic constructor of a Sequence object, basically a double file
         """
-        self.actions = actions
-        self.times = times
-        self.i = -1
+        self.actions = co.deque ()
+        self.times = co.deque ()
+        self.size = 0
     
-    def get_action_time (self)->tuple :
+    def get_actions_time (self)->tuple :
         """
         Get the action and the time of a turn
         
         output :
-            - the action
-            - the time
+            - the actions (tuple of Action)
+            - the time (int, in ms)
         """
-        self.i += 1
-        return self.actions[self.i], self.times[self.i]
+        assert self.size > 0, "the sequence is empty"
+        self.size -= 1
+        return self.actions.pop ()
+    
+    def add_actions (self, actions:list, time:int) :
+        """
+        Add a serie of action
+
+        input :
+            - actions : a list with all the actions
+            - time : the time in ms
+        """
+        self.size += 1
+        self.actions.appendleft ((actions, time))
+    
+    def is_empty (self)->bool :
+        """
+        If the sequence is empty
+        
+        outtput :
+            - the boolean value
+        """
+        return self.size == 0
 
 class Action :
     def __init__ (self, type:str, dest:list) :
@@ -32,11 +49,14 @@ class Action :
         Basic constructor of an Action object
         
         input :
-            - type : the type of the action (M: move, A: attack)
-            - dest : the coordinates of the destination in the case of a moving, or the coordinates of the affected case in the case of an attack
+            - type : the type of the action (D: delet, A: add)
+            - dest : the coordinates of the affected case
         """
         self.type = type
         self.dest = dest
+    
+    def __str__(self) -> str :
+        return self.type + " " + str (self.dest)
     
     def get_type (self)->str :
         """
@@ -49,9 +69,9 @@ class Action :
     
     def get_dest (self)->list :
         """
-        Get the destination(s) of the represented action
+        Get the destination of the represented action
         
         output :
-            - the destination(s)
+            - the destination
         """
         return self.dest

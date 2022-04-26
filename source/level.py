@@ -7,7 +7,6 @@ import monster
 import player
 import stray
 import video
-import boss
 import algo
 
 class Level :

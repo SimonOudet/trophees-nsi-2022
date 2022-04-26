@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import entity
-import boss
 
 class Player (entity.Entity) :
     def __init__ (self, anim:list, times:list, coord:tuple, hp:int):
@@ -45,4 +44,5 @@ class Player (entity.Entity) :
                     self.boss = boss
                     print ("find")
                     break
+            self.boss.trigger ()
         return ret

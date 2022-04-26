@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import general as ge
 import sequence
 import entity
 import pygame
+import level
 
 class Boss (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence):
+    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level):
         """
         Basic constructor of a boss object
         
@@ -16,14 +18,16 @@ class Boss (entity.Entity) :
             - activ : the coordinates where the player agro the boss
             - hp : starting health points
             - sequence : the fight sequence
+            - level : the level representation
         """
         super ().__init__ (anim, times, "B", coord, hp)
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
-        self.current_action = sequence.get_action_time ()       # the action, the time
+        self.current_action = sequence.get_actions_time ()      # the actions, the time
         self.is_active = False                                  # if the Boss is fighting
         self.activ = activ
+        self.level = level
     
     def pulse (self, map:list, played:bool):
         """
@@ -35,25 +39,46 @@ class Boss (entity.Entity) :
             - played : if we have to resolve the player action
         """
         if (self.is_active) :
-            self.music_time = self.music_clock.tick ()
-            if (self.music_time >= self.current_action [1]) :
+            # print ("IS ACTIVE")
+            self.music_time += self.music_clock.tick ()
+            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :   # the boss have to play
                 self.music_time = 0
-                # do self.current_action [0]
-                if (self.current_action [0] == "A") :               # an attack
-                    self.attack (map, self.current_action [1])
-                else :                                              # a move
-                    self.go_to (self.current_action [1])
-                self.current_action = self.sequence.get_action_time ()
+                # do the current actions
+                for action in self.current_action [0] :
+                    if (action.get_type () == "D") :                                                        # a remove
+                        print ("delet")
+                        self.remove_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
+                    else :                                                                                  # an adding
+                        print ("adding")
+                        self.add_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
+                if not (self.sequence.is_empty ()) :
+                    self.current_action = self.sequence.get_actions_time ()
+                else :
+                    self.is_active = False
+                    print ("DEAD")
+                self.music_time = 0
     
-    def attack (self, map:list, dest:list) :
+    def remove_floor (self, level:level.Level, x:int, y:int) :
         """
-        Make an attack against all of the given coordinates
+        Remove the floor of the given coordinates
 
         input :
-            - map : the level representation
-            - dest : a list of coordinates
+            - level : the level representation
+            - x : the x coordinates
+            - y : the y coordinates
         """
-        pass
+        level.change_map (x, y, " ")
+
+    def add_floor (self, level:level.Level, x:int, y:int) :
+        """
+        Add a floor to the given coordinates
+
+        input :
+            - level : the level representation
+            - x : the x coordinates
+            - y : the y coordinates
+        """
+        level.change_map (x, y, "-")
 
     def get_activ (self)->tuple :
         """
@@ -64,3 +89,9 @@ class Boss (entity.Entity) :
             - the coordinates
         """
         return self.activ
+    
+    def trigger (self) :
+        """
+        Activation of the boss
+        """
+        self.is_active = True

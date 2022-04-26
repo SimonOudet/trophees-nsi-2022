@@ -24,14 +24,13 @@ def init ()->list :
 
     # level genreration
     map, rooms = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[4].get_boss_position (), 20), [], [], [])
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20), [], [], [])
     # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_door_position (), 20, sequence.Sequence ([sequence.Action ("A", (0, 0))], [1000])) for c in range (len (rooms))], True) # !CHANGE!
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_door_position (), 20, load_seq ("boss", c, rooms[c].get_orientation ()), current_level) for c in range (len (rooms))], True) # !CHANGE!
     # add the vagabonds
     current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[1].get_boss_position (), 20, current_level.get_player ())])
-
     # video
-    screen = video.Video (2 / 3, rooms[4].get_boss_position ())
+    screen = video.Video (2 / 3, rooms[0].get_boss_position ())
 
     return screen, current_level
 
@@ -121,8 +120,39 @@ def generate_map (w:int, h:int)->list :
     #    print (i)
     # return level, boss
 
-def load_seq (name, i) :
-    pass
+def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
+    """
+    Load, from a txt file, a sequence
+    
+    input :
+        - name : the name of the file (boss for a boss...)
+        - i : the index
+        - orientation : the orientation (a tuple with : (if we have to switch x and y, a tupple for the coordinates)
+    output :
+        - the sequence
+    """
+    seq = sequence.Sequence ()
+    actions = []
+    time = 0
+    type = "A"
+    with open ('data/' + name + str (i) + '.txt','r') as fichier :
+        # for linux :
+        for ligne in fichier :
+            ligne = ligne.rstrip ('\n')
+            if (len (ligne) == 0) :                 # ligne break = new actions
+                seq.add_actions (actions, time)
+                actions = []
+                time = 0
+            elif (time == 0) :                      # time
+                time = int (ligne)
+            elif (len (ligne) == 1) :               # type
+                    type = ligne[0]
+            else :                                  # coor
+                x, y = tuple (map (int, ligne.split ()))
+                if (orientation[0]) :               # we have to switch x and y
+                    x, y = y, x
+                actions.append (sequence.Action (type, (x * orientation[1][0], y * orientation[1][1])))
+    return seq
 
 screen, current_level = init ()
 key_cooldown = {97:False, 100:False, 119:False, 115:False}
@@ -130,8 +160,6 @@ played = False # if we have to resolve the player action
 
 # main loop
 while True :
-
-    # new level ?
 
     # events
     for event in pygame.event.get () :
