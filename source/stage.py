@@ -10,22 +10,24 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     input : 
         - stage_size : the bigest size of the square representing the empty stage, the size of the floor must be greater than the maximum width or length of the largest boss room
         - table_boss_rooms : table containing each boss room, without the walls, that the floor will contain. 
+            " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground, "B" = boss, "_" = path
             Each element of the table will be an table containing the data allowing the 
             generation of a boss room
+            the four sides of each boss room must be composed of doormat, 
             [  
-              [["v", "g", ...], ["v", "g", ...], ...]->matrix_representing_a_boss_room_with_"v"_for_void_"g"_for_ground_"b"_for_boss_position_and_"p"_for_player’s_departure_position, 
-              , ...]
-            
-            example:
-                table_boss_rooms = [[["v", "v", "v", "g", "v"], ["v", "g", "g", "g", "g"], ["g", "g", "g", "g", "v"], ["v", "g", "p", "g", "v"]]]
-    
+              ["M", "M", "M", "M", "M", "M"],  
+              ["M", ..., "M"], 
+              ["M", ..., "M"], 
+              ["M", ..., "M"], 
+              ["M", "M", "M", "M", "M", "M"]
+            ]
     output : 
-        - a double-entry table representing a floor, whose boss rooms are accessible and 
-          randomly generated on the floor
+        - a double-entry table representing a floor
         - boss_position = [(x, y), ...]
 
     """
     rooms = []
+    stray_position = []
     stage = [[" "] * (stage_size * 2) for i in range (stage_size * 2)]
 
     # placement and creation of each room
@@ -90,6 +92,9 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
                 stage[line_stage][column_stage] = " "
             #print (stage[line_stage][column_stage], end=" ")
         #print("")
+
+    nb_stray = len (table_boss_rooms) - (len (table_boss_rooms) // 2)
+    proba = nb_stray / len (table_boss_rooms)
     
     # creation of the paths
     family = {rooms[i].get_door_position ():i for i in range (len (rooms))}
@@ -102,15 +107,20 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
             if (door_index >= len (rooms)) :
                 door_index = 0
             finish_door = rooms[door_index].get_door_position ()
-        path (stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])    # creation of the path
+        path (stray_position, stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])    # creation of the path
+        if not (nb_stray == 0): 
+            probability = random.random()
+            if probability > proba :
+                stray_position.pop ()
         for position in range (len (rooms)) :                                               # all the soons of departur_door and finish_door cone from the same family
             if (family[rooms[position].get_door_position ()] == max (family[departur_door], family[finish_door])) :
                 family[rooms[position].get_door_position ()] = min (family[departur_door], family[finish_door])
-    
+        
     # creation of the wall
     for line_stage in range (len (stage)) :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "_") :
+                
                 # a 3 * 3 square
                 for i in range (-1, 2) :
                     for j in range (-1, 2) :
@@ -122,7 +132,7 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     #        print (stage[line_stage][column_stage], end=" ")
     #    print("")
     
-    return stage, rooms
+    return stage, rooms, stray_position
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """
@@ -163,11 +173,18 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
             if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == ".") :
                 rooms[-1].set_door_position((column + x_starting_coordinate, line + y_starting_coordinate))
 
-def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
+def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """
-    
+    function that generates path between two boss room on the stage
+    It’s a recursive function
+    input :
+        - stray_pos : 
+        - stage : this is the stage that the function will modify 
+        - x_finish_position, y_finish_position : position of a first door
+        - x_departur_position, y_departur_position : position of a second door
     """
     if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
+        stray_pos.append ((x_finish_position, y_finish_position))
         return
     x_ideal = x_finish_position - x_departur_position
     y_ideal = y_finish_position - y_departur_position
