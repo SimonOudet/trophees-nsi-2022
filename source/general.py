@@ -23,13 +23,14 @@ class Val :
     DOOR_TIMES = [1000]
 
 
-    TIME_PLAY = 1
+    TIME_PLAY = 2
     MUSIC_TO_TIME = 1000 # to ms
 
 class Room :
     def __init__ (self) :
         self.boss_position = ()
         self.door_position = ()
+        self.activ_position = ()
         self.orientation = None
     
     def set_boss_position (self, boss_position:tuple) :
@@ -38,14 +39,20 @@ class Room :
     def set_door_position (self, door_position:tuple) :
         self.door_position = door_position
     
+    def set_activ_position (self, activ_position:tuple) :
+        self.activ_position = activ_position
+    
     def set_orientation (self, orientation:str) :
         self.orientation = orientation
     
-    def get_boss_position (self)->tuple :
+    def get_boss_position (self)-> tuple :
         return self.boss_position
     
-    def get_door_position (self)->tuple :
+    def get_door_position (self)-> tuple :
         return self.door_position
     
-    def get_orientation (self)->str :
+    def get_activ_position (self)-> tuple :
+        return self.activ_position
+    
+    def get_orientation (self)-> str :
         return self.orientation

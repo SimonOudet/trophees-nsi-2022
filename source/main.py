@@ -24,9 +24,9 @@ def init ()->list :
 
     # level genreration
     map, rooms = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20), [], [], [])
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, [ro.get_activ_position () for ro in rooms]), [], [], [])
     # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_door_position (), 20, load_seq ("boss", c, rooms[c].get_orientation ()), current_level) for c in range (len (rooms))], True) # !CHANGE!
+    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c, rooms[c].get_orientation ()), current_level) for c in range (len (rooms))], True) # !CHANGE!
     # add the vagabonds
     current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[1].get_boss_position (), 20, current_level.get_player ())])
     # video
@@ -133,7 +133,7 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
     """
     seq = sequence.Sequence ()
     actions = []
-    time = 0
+    time = -1
     type = "A"
     with open ('data/' + name + str (i) + '.txt','r') as fichier :
         # for linux :
@@ -142,8 +142,8 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
             if (len (ligne) == 0) :                 # ligne break = new actions
                 seq.add_actions (actions, time)
                 actions = []
-                time = 0
-            elif (time == 0) :                      # time
+                time = -1
+            elif (time == -1) :                     # time
                 time = int (ligne)
             elif (len (ligne) == 1) :               # type
                     type = ligne[0]
@@ -206,7 +206,7 @@ while True :
                 key_cooldown[115] = True
 
     # pulse
-    for p in current_level.get_pulsable () :
+    for p in current_level.get_pulsable () :            # interesting : the player always pulse before any monster
         p.pulse (current_level.get_map (), played)
     played = False
 
@@ -216,4 +216,4 @@ while True :
         surf, coor = d.draw ()
         screen.add (surf, coor)
     screen.refresh ()
-    time.sleep (0.01)
+    # time.sleep (0.005)

@@ -28,6 +28,7 @@ class Boss (entity.Entity) :
         self.is_active = False                                  # if the Boss is fighting
         self.activ = activ
         self.level = level
+        self.dead = False
     
     def pulse (self, map:list, played:bool):
         """
@@ -41,21 +42,25 @@ class Boss (entity.Entity) :
         if (self.is_active) :
             # print ("IS ACTIVE")
             self.music_time += self.music_clock.tick ()
-            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :   # the boss have to play
+            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :                        # the boss have to play
+                # print (self.music_time)
+                # print ("******************************")
                 self.music_time = 0
                 # do the current actions
                 for action in self.current_action [0] :
                     if (action.get_type () == "D") :                                                        # a remove
-                        print ("delet")
+                        # print ("delet")
                         self.remove_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
                     else :                                                                                  # an adding
-                        print ("adding")
+                        # print ("adding")
                         self.add_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
+                # print ("******************************")
                 if not (self.sequence.is_empty ()) :
                     self.current_action = self.sequence.get_actions_time ()
                 else :
                     self.is_active = False
                     print ("DEAD")
+                    self.dead = True
                 self.music_time = 0
     
     def remove_floor (self, level:level.Level, x:int, y:int) :
@@ -95,3 +100,23 @@ class Boss (entity.Entity) :
         Activation of the boss
         """
         self.is_active = True
+        self.music_clock.tick ()
+        # print ("activation : ", self.activ)
+    
+    def get_current (self)-> tuple :
+        """
+        Return the current action
+
+        output :
+            - the current action, a tuple (actions, time)
+        """
+        return self.current_action
+    
+    def is_dead (self)-> bool :
+        """
+        If the boss is dead
+        
+        output :
+            - the boolean answer
+        """
+        return self.dead

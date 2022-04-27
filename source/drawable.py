@@ -44,3 +44,6 @@ class Drawable (pulsable.Pulsable) :
             if (self.i == len (self.anim)) :
                 self.i = 0
         return self.anim [self.i], self.coord
+    
+    def __str__ (self) -> str:
+        return self.ID

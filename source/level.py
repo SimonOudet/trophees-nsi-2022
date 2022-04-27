@@ -97,7 +97,7 @@ class Level :
             - val : the new value of this place
         """
         self.map [y][x] = val
-        self.update_map (x, y) # ! CHANGE !
+        self.update_map (x, y) # ! CHANGE ! (only if an other entity than a boss use this function)
     
     def get_player (self)->player.Player :
         """
