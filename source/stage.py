@@ -22,8 +22,9 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
               ["M", "M", "M", "M", "M", "M"]
             ]
     output : 
-        - a double-entry table representing a floor
-        - boss_position = [(x, y), ...]
+        - stage : a double-entry table representing a floor
+        - rooms : a table containing all coordination we need for the restr of the game
+        - stray_position : a table containing stray's coordination 
 
     """
     rooms = []
@@ -31,10 +32,9 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     stage = [[" "] * (stage_size * 2) for i in range (stage_size * 2)]
 
     # placement and creation of each room
-    for boss_room in table_boss_rooms :
+    for boss_room in table_boss_rooms :                                                     #Loop that generates each boss room
         rooms.append (general.Room ())                                                      # this object represent the room data       
         compass = random.choice(["north", "south", "east", "west"])                         # random orientation choice
-        #print(compass)
         # creation of the room
         if (compass == "north") :
             # 180 degres
@@ -67,13 +67,15 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         
         # placement of the room
 
-        # searching of a whole place
+        # searching of a good place
         x_starting = random.randint (4, (stage_size + 4))
         y_starting = random.randint (4, (stage_size + 4))
         
+        #Check if room can be generated at this position
         while not (colision_test (new_boss_room, stage, x_starting, y_starting)) :
-            x_starting += 1
+            x_starting += 1                                                     #If the generation is not possible then we shift the coordinates by 1 in x, and in y
             y_starting += 1
+            #Check that the room remains in the floor
             if (x_starting > stage_size + 4) :
                 x_starting = random.randint (4, (stage_size + 4))
             if (y_starting > stage_size + 4) :
@@ -81,38 +83,33 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         
         # placement
         room_generator (new_boss_room, stage, x_starting, y_starting, rooms)
-        #for elt in stage :
-            #print (elt)
-        #print ("")
     
     # switching the doormate to void
     for line_stage in range (len (stage)) :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "M") :
                 stage[line_stage][column_stage] = " "
-            #print (stage[line_stage][column_stage], end=" ")
-        #print("")
 
     nb_stray = len (table_boss_rooms) - (len (table_boss_rooms) // 2)
     proba = nb_stray / len (table_boss_rooms)
     
     # creation of the paths
     family = {rooms[i].get_door_position ():i for i in range (len (rooms))}
-    while sum(family.values()) != 0 :                                                       # while each rooms are not in the same family
+    while sum(family.values()) != 0 :                                                       # Ensures all rooms are connected
         departur_door = rooms[random.randint(0, len(rooms) - 1)].get_door_position ()       # starting room
         door_index = random.randint(0, len(rooms) - 1)
         finish_door = rooms[door_index].get_door_position ()                                # ending room
-        while (family[finish_door] == family[departur_door]) :                              # if the starting and the ending room are frome the same family 
+        while (family[finish_door] == family[departur_door]) :                              # However if the second door is already connected then we will look for another door not connected
             door_index += 1
             if (door_index >= len (rooms)) :
                 door_index = 0
             finish_door = rooms[door_index].get_door_position ()
         path (stray_position, stage, finish_door[0], finish_door[1], departur_door[0], departur_door[1])    # creation of the path
-        if not (nb_stray == 0): 
+        if not (nb_stray == 0):                                                                             # Place stray on tne stage
             probability = random.random()
             if probability > proba :
                 stray_position.pop ()
-        for position in range (len (rooms)) :                                               # all the soons of departur_door and finish_door cone from the same family
+        for position in range (len (rooms)) :                                               # We get the information that the two doors are connected
             if (family[rooms[position].get_door_position ()] == max (family[departur_door], family[finish_door])) :
                 family[rooms[position].get_door_position ()] = min (family[departur_door], family[finish_door])
         
@@ -120,18 +117,12 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     for line_stage in range (len (stage)) :
         for column_stage in range (len (stage[line_stage])) :
             if (stage[line_stage][column_stage] == "_") :
-                
                 # a 3 * 3 square
                 for i in range (-1, 2) :
                     for j in range (-1, 2) :
                         if (stage[line_stage + i][column_stage + j] == " ") :
                             stage[line_stage + i][column_stage + j] = "#"
-    
-    #for line_stage in range (len (stage)) :
-    #    for column_stage in range (len (stage[line_stage])) :
-    #        print (stage[line_stage][column_stage], end=" ")
-    #    print("")
-    
+                            
     return stage, rooms, stray_position
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
@@ -178,7 +169,7 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
     function that generates path between two boss room on the stage
     It’s a recursive function
     input :
-        - stray_pos : 
+        - stray_pos : a table containing the potentialy position of the stray
         - stage : this is the stage that the function will modify 
         - x_finish_position, y_finish_position : position of a first door
         - x_departur_position, y_departur_position : position of a second door
@@ -186,11 +177,13 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
     if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
         stray_pos.append ((x_finish_position, y_finish_position))
         return
+    #Allows to know the position of one door in relation to the other
     x_ideal = x_finish_position - x_departur_position
     y_ideal = y_finish_position - y_departur_position
     ideals = []
     not_ideals = []
     
+    #Search for the best directions to take from the first door 
     if (x_departur_position <= 1) :
         ideals.append((1, 0))
     elif (x_departur_position >= (len (stage) - 1)) :
@@ -203,7 +196,8 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
         not_ideals.append ((1, 0))
     else :
         not_ideals.extend ([(1, 0), (-1, 0)])
-    
+        
+    #Search for the best directions to take from the second door 
     if (y_departur_position <= 1) :
         ideals.append((0, 1))
     elif (y_departur_position >= (len (stage[0]) - 1)) :
@@ -216,19 +210,16 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
         not_ideals.append ((0, 1))
     else :
         not_ideals.extend ([(0, 1), (0, -1)])
-    
+        
+    #Creation of a list containing in a first time the most interesting directions to sort randomly then the less interesting directions they also sort randomly
     random.shuffle (ideals)
     random.shuffle (not_ideals)
     path_posibility = ideals + not_ideals
     
-    for posibility in path_posibility :
+    for posibility in path_posibility :                                         # Loop that generates the path recursively
         x = x_departur_position + posibility[0]
         y = y_departur_position + posibility[1]
         if (stage[y][x] == "_") :
-            #for line_stage in range (len (stage)) :
-                #for column_stage in range (len (stage[line_stage])) :
-                    #print (stage[line_stage][column_stage], end=" ")
-                #print("")
             return path(stage, x, y, x_finish_position, y_finish_position)
         if (stage[y][x] == " ") :
             stage[y][x] = "_"
