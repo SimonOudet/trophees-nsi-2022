@@ -220,10 +220,10 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
         x = x_departur_position + posibility[0]
         y = y_departur_position + posibility[1]
         if (stage[y][x] == "_") :
-            return path(stage, x, y, x_finish_position, y_finish_position)
+            return path(stray_pos, stage, x, y, x_finish_position, y_finish_position)
         if (stage[y][x] == " ") :
             stage[y][x] = "_"
-            return path(stage, x, y, x_finish_position, y_finish_position)
+            return path(stray_pos, stage, x, y, x_finish_position, y_finish_position)
        
      
 

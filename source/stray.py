@@ -22,7 +22,12 @@ class Stray (monster.Monster) :
         """
         if played == True :
             if self.agro :
-                self.coord = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
+                coo = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
+                if (coo == self.player.get_pos ()) :
+                    coo = self.coor
+                    dammage = random.randint (5, 10)
+                    self.player.set_health (self.player.get_health() - ((self.player.get_hp () * dammage) // 100))
+                self.coor = coo
             else :
                 posibilities = [(0, 1), (0, -1), (1, 0), (-1, 0)]
                 random.shuffle(posibilities)

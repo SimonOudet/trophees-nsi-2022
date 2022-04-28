@@ -15,7 +15,17 @@ class Entity (drawable.Drawable) :
             - hp : starting health points
         """
         super ().__init__ (anim, times, ID, coord)
+        self.hp_base = hp
         self.hp = hp
+        
+    def get_hp (self)->int :
+        """
+        Return the basic healt points
+        
+        output :
+            - the basic healt points
+        """
+        return self.hp_base 
     
     def get_health (self)->int :
         """
@@ -60,7 +70,9 @@ class Entity (drawable.Drawable) :
         y = self.coord [1] + coor [1]
         size = (len (map[0]), len (map))
         if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
-            self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+            coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+            if (coo == )
+            self.coord = coo
             return True
         return False
     
