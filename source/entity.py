@@ -71,7 +71,8 @@ class Entity (drawable.Drawable) :
         size = (len (map[0]), len (map))
         if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
             coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-            if (coo == )
+            if (coo == 0) :
+                pass
             self.coord = coo
             return True
         return False
