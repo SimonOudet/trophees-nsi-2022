@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import drawable
+import random
+import level
 
 class Entity (drawable.Drawable) :
     def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int):
@@ -55,7 +57,7 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
-    def move (self, coor:tuple, map:list, forbiden=())->bool :
+    def move (self, coor:tuple, map:list, forbiden=(), damage=0)->bool :
         """
         Move the entity
         
@@ -71,8 +73,15 @@ class Entity (drawable.Drawable) :
         size = (len (map[0]), len (map))
         if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
             coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-            if (coo == 0) :
-                pass
+            #player vs stray
+            vags = level.get_vagabonds ()
+            for vag in vags :
+                if (coo == vag.get_pos ()) :
+                    coo = self.coord
+                    critical = random.random ()
+                    if critical > 0.5 :
+                        self.vag.set_health (self.vag.get_health() - (damage * 2))
+                    self.vag.set_health (self.vag.get_health() - damage)
             self.coord = coo
             return True
         return False

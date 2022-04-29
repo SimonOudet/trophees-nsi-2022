@@ -133,7 +133,7 @@ class Level :
         output :
             - a list with all vagabonds 
         """
-        return self.vag
+        return self.vags
     
     def set_monsters (self, monsters:list, are_bosses=False) :
         """

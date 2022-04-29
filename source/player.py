@@ -3,7 +3,7 @@
 import entity
 
 class Player (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, hp:int):
+    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, damage:int):
         """
         Basic constructor of a Drawable object
         
@@ -17,6 +17,7 @@ class Player (entity.Entity) :
         self.fighting = False
         self.destruct_path = ()
         self.boss = None
+        self.damage = damage
     
     def move (self, coor:tuple, map:list, bosses:list)->bool :
         """
@@ -29,7 +30,7 @@ class Player (entity.Entity) :
         output :
             - if we have change our position
         """
-        ret = super ().move (coor, map, self.destruct_path)
+        ret = super ().move (coor, map, self.destruct_path, self.damage)
         if (map[self.coord[1]][self.coord[0]] == ".") and not self.fighting :
             print ("activation")
             self.fighting = True
