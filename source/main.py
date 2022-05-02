@@ -4,6 +4,7 @@ import general as ge
 import sequence
 import pygame
 import player
+import music
 import stray
 import stage
 import video
@@ -18,6 +19,7 @@ def init ()-> list :
 
     output :
         - the screen representation with a Video object
+        - the music representation with a Music object
         - the level representation with a Level object
     """
     pygame.init ()
@@ -25,7 +27,9 @@ def init ()-> list :
     MOVE_SECOND = 10
     # level genreration
     map, rooms = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), MOVE_SECOND), [], [], [])
+    # audio
+    music = music.Music (len (rooms) - 1,  [room.get_orientation () for room in rooms]) # the first room is not a boss room
+    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), music, MOVE_SECOND), [], [], [])
     # add the bosses
     current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
     # add the vagabonds
@@ -33,7 +37,7 @@ def init ()-> list :
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
 
-    return screen, current_level
+    return screen, music, current_level
 
 def generate_map (w:int, h:int)->list :
     """
@@ -166,7 +170,7 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
                 actions.append (sequence.Action (type, (x * orientation[1][0], y * orientation[1][1])))
     return seq
 
-screen, current_level = init ()
+screen, music_representation, current_level = init ()
 played = False # if we have to resolve the player action
 
 # main loop

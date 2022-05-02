@@ -3,9 +3,10 @@
 import general as ge
 import entity
 import pygame
+import music
 
 class Player (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, MOVE_SECOND:float):
+    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, music:music.Music, MOVE_SECOND:float):
         """
         Basic constructor of a Drawable object
         
@@ -16,6 +17,7 @@ class Player (entity.Entity) :
             - hp : starting health points
             - rooms : a list of all the rooms representation of the level
             - nb_boss : the number of boss of the level
+            - music : the music manager
             - MOVE_SECOND : the number of moving allowed for a second
         """
         super ().__init__ (anim, times, "P", coord, hp, MOVE_SECOND)
@@ -30,6 +32,7 @@ class Player (entity.Entity) :
         self.rooms = rooms
         self.ib = None              # the boss index
         self.nb_living_boss = nb_boss
+        self.music = music
     
     def move (self, coor:tuple, map:list, bosses:list)->bool :
         """
@@ -47,6 +50,7 @@ class Player (entity.Entity) :
             ret = super ().move (coor, map, self.forbiden_paths)
         elif (self.can_play) :                                                                  # he's fighting but he can play
             ret = super ().move (coor, map, self.forbiden_paths)
+            self.music.move (coor)
             self.can_play = False
         for i in range (1, len (self.rooms)) :                                                  # starting with 1, 0 is the player starting room
             if (self.coord == self.rooms[i].get_activ_position ()) :                            # we are in a boss activation position
@@ -57,6 +61,7 @@ class Player (entity.Entity) :
             self.fighting = True
             self.boss = bosses[self.ib]
             self.boss.trigger ()
+            self.music.start_fight (self.ib)
             self.music_clock.tick ()
             print ("he's playing")
         return ret
@@ -86,6 +91,7 @@ class Player (entity.Entity) :
                 print ("he's playing")
             elif self.boss.is_dead () :                                                                 # ending of the fight
                 self.fighting = False
+                self.music.stop_fight ()
                 self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                        # +1 beacause of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
                 print ("TP")
