@@ -74,14 +74,18 @@ class Entity (drawable.Drawable) :
         if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
             coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
             #player vs stray
+            new_vags = []
             vags = level.get_vagabonds ()
             for vag in vags :
                 if (coo == vag.get_pos ()) :
                     coo = self.coord
                     critical = random.random ()
                     if critical > 0.5 :
-                        self.vag.set_health (self.vag.get_health() - (damage * 2))
-                    self.vag.set_health (self.vag.get_health() - damage)
+                        vag.set_health (vag.get_health() - (damage * 2))
+                    vag.set_health (vag.get_health() - damage)
+                if (vag.get_health() > 0) :
+                    new_vags.append (vag)
+            level.Level.add_monsters(new_vags)
             self.coord = coo
             return True
         return False
