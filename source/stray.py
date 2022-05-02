@@ -6,8 +6,8 @@ import algo
 
 class Stray (monster.Monster) :
     
-    def __init__(self, anim, times, coord, hp, player) :
-        super().__init__(anim, times, coord, hp)
+    def __init__(self, anim, times, coord, hp, player, MOVE_SECOND:float) :
+        super().__init__(anim, times, coord, hp, MOVE_SECOND)
         self.player = player
         self.agro = False
      

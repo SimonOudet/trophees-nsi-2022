@@ -7,7 +7,7 @@ import pygame
 import level
 
 class Boss (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level):
+    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level, MOVE_SECOND:float):
         """
         Basic constructor of a boss object
         
@@ -19,8 +19,9 @@ class Boss (entity.Entity) :
             - hp : starting health points
             - sequence : the fight sequence
             - level : the level representation
+            - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, "B", coord, hp)
+        super ().__init__ (anim, times, "B", coord, hp, MOVE_SECOND)
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
@@ -40,21 +41,15 @@ class Boss (entity.Entity) :
             - played : if we have to resolve the player action
         """
         if (self.is_active) :
-            # print ("IS ACTIVE")
             self.music_time += self.music_clock.tick ()
             if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :                        # the boss have to play
-                # print (self.music_time)
-                # print ("******************************")
                 self.music_time = 0
                 # do the current actions
                 for action in self.current_action [0] :
                     if (action.get_type () == "D") :                                                        # a remove
-                        # print ("delet")
                         self.remove_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
                     else :                                                                                  # an adding
-                        # print ("adding")
                         self.add_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
-                # print ("******************************")
                 if not (self.sequence.is_empty ()) :
                     self.current_action = self.sequence.get_actions_time ()
                 else :
@@ -101,7 +96,7 @@ class Boss (entity.Entity) :
         """
         self.is_active = True
         self.music_clock.tick ()
-        # print ("activation : ", self.activ)
+        print ("activation : ", self.ID)
     
     def get_current (self)-> tuple :
         """

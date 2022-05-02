@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import drawable
+import pygame
 
 class Entity (drawable.Drawable) :
-    def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int):
+    def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
         """
         Basic constructor of a entity object
         
@@ -13,9 +14,13 @@ class Entity (drawable.Drawable) :
             - ID : unique identifier
             - coord : the coordinates of the top left corner
             - hp : starting health points
+            - MOVE_SECOND : the number of moving allowed for a second
         """
         super ().__init__ (anim, times, ID, coord)
         self.hp = hp
+        self.moving_clock = pygame.time.Clock ()
+        self.moving_time = 0
+        self.MOVE_SECOND = MOVE_SECOND
     
     def get_health (self)->int :
         """
@@ -45,23 +50,26 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
-    def move (self, coor:tuple, map:list, forbiden=())->bool :
+    def move (self, coor:tuple, map:list, forbiden=[])->bool :
         """
         Move the entity
         
         input :
             - coor : the coordinates that will increase the currents coordinates
             - map : the level representation
-            - forbiden : a tuple of tuple with positions forbiden
+            - forbiden : a list of tuple with positions forbiden
         output :
             - if we have change our position
         """
-        x = self.coord [0] + coor [0]
-        y = self.coord [1] + coor [1]
-        size = (len (map[0]), len (map))
-        if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
-            self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-            return True
+        self.moving_time += self.moving_clock.tick ()
+        if (self.moving_time >= 1000 / self.MOVE_SECOND) :
+            self.moving_time = 0
+            x = self.coord [0] + coor [0]
+            y = self.coord [1] + coor [1]
+            size = (len (map[0]), len (map))
+            if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
+                self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+                return True
         return False
     
     def go_to (self, coor:tuple, map:list) :
@@ -73,5 +81,7 @@ class Entity (drawable.Drawable) :
             - map : the level representation
         """
         size = (len (map[0]), len (map))
-        if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] == "-") :
+        if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] != "#") :
             self.coord = coor
+            return True
+        return False

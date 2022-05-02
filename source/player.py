@@ -5,7 +5,7 @@ import entity
 import pygame
 
 class Player (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, activs:list):
+    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, MOVE_SECOND:float):
         """
         Basic constructor of a Drawable object
         
@@ -14,18 +14,22 @@ class Player (entity.Entity) :
             - times : a list of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
             - hp : starting health points
-            - activs : a list of all the boss activation coord
+            - rooms : a list of all the rooms representation of the level
+            - nb_boss : the number of boss of the level
+            - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, "P", coord, hp)
+        super ().__init__ (anim, times, "P", coord, hp, MOVE_SECOND)
         self.fighting = False
         self.can_play = True        # if the player can play
         self.have_play = True       # if the player is in a playable duration
-        self.destruct_path = ()
+        self.forbiden_paths = []
         self.boss = None
         self.time_wait = 0
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
-        self.activs = activs
+        self.rooms = rooms
+        self.ib = None              # the boss index
+        self.nb_living_boss = nb_boss
     
     def move (self, coor:tuple, map:list, bosses:list)->bool :
         """
@@ -40,29 +44,21 @@ class Player (entity.Entity) :
         """
         ret = False
         if not self.fighting :                                                                  # normal, he's not fighting
-            ret = super ().move (coor, map, self.destruct_path)
+            ret = super ().move (coor, map, self.forbiden_paths)
         elif (self.can_play) :                                                                  # he's fighting but he can play
-            ret = super ().move (coor, map, self.destruct_path)
-            # self.can_play = False
-        if (self.coord in self.activs) and not self.fighting :
-            # print ("activation")
+            ret = super ().move (coor, map, self.forbiden_paths)
+            self.can_play = False
+        for i in range (1, len (self.rooms)) :                                                  # starting with 1, 0 is the player starting room
+            if (self.coord == self.rooms[i].get_activ_position ()) :                            # we are in a boss activation position
+                self.ib = i - 1                                                                 # -1 beacause of the first room, the player starting room
+                self.forbiden_paths.append (self.rooms[i].get_door_position ())
+                break
+        if (self.ib != None) and not self.fighting :                                            # we juste activate a boss
             self.fighting = True
-            # find the door direction
-            for dir in ((0, 1), (0, -1), (-1, 0), (1, 0)) :
-                if (map[self.coord[1] + dir [1]][self.coord[0] + dir[0]] == ".") :
-                    self.destruct_path = ((self.coord[0] - dir[0], self.coord[1] - dir [1]), ()) # strange, the second item is necessary
-                    break
-            # find the boss
-            for boss in bosses :
-                if (boss.get_activ () == self.coord) :
-                    self.boss = boss
-                    # print ("find")
-                    break
+            self.boss = bosses[self.ib]
             self.boss.trigger ()
             self.music_clock.tick ()
             print ("he's playing")
-        elif self.fighting :
-            self.fighting = not self.boss.is_dead ()
         return ret
     
     def pulse (self, map:list, played:bool) :
@@ -88,3 +84,31 @@ class Player (entity.Entity) :
                 self.can_play = True
                 self.music_time = 0
                 print ("he's playing")
+            elif self.boss.is_dead () :                                                                 # ending of the fight
+                self.fighting = False
+                self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                        # +1 beacause of the first room, the player starting room
+                self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
+                print ("TP")
+                self.ib = None
+                self.nb_living_boss -= 1
+    
+    def is_fighting (self)->bool :
+        """
+        If the player is fighting against
+        a boss
+
+        output :
+            - the boolean value
+        """
+        return self.fighting
+    
+    def is_end (self)-> bool :
+        """
+        If the player has
+        beaten all of the boss
+        of the level
+
+        output :
+            - the boolean value
+        """
+        return self.nb_living_boss == 0

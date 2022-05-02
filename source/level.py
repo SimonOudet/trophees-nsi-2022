@@ -23,7 +23,7 @@ class Level :
         """
         self.map = map
         self.load_map ()
-        self.dicover = {i.get_pos ():False for i in self.environment}
+        self.discover = {i.get_pos ():False for i in self.environment}
         self.player = player
         self.bosses = bosses
         self.vags = vags
@@ -38,7 +38,7 @@ class Level :
         self.hiden_environment = []
         for i in range (len (self.map)) :
             for j in range (len (self.map[i])) :
-                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "B") : # ground
+                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "P") : # ground
                     self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
                     self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == "#") : # wall
@@ -61,6 +61,7 @@ class Level :
         i = algo.search_drawable (self.environment, (x, y))
         # an adding :
         if (i == -1) :
+            self.discover[(x, y)] = True
             self.environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
             self.hiden_environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
         # a removing
@@ -133,7 +134,7 @@ class Level :
         output :
             - a list with all vagabonds 
         """
-        return self.vag
+        return self.vags
     
     def set_monsters (self, monsters:list, are_bosses=False) :
         """
@@ -213,8 +214,8 @@ class Level :
             - all the drawable object of this level
         """
         player_vision = []
-        algo.manatan_vision (5, self.map, player_pos, player_vision, self.dicover)
-        return [i for i in self.hiden_environment if self.dicover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.bosses + self.vags + [self.player] # !CHANGE!
+        algo.manatan_vision (5, self.map, player_pos, player_vision, self.discover)
+        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.bosses + self.vags + [self.player] # !CHANGE!
 
     def get_pulsable (self)->list :
         """
