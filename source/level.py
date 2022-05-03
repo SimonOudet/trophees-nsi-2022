@@ -215,7 +215,7 @@ class Level :
         """
         player_vision = []
         algo.manatan_vision (5, self.map, player_pos, player_vision, self.discover)
-        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + self.bosses + self.vags + [self.player] # !CHANGE!
+        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if vag.get_pos () in player_vision] + [self.player] # !CHANGE!
 
     def get_pulsable (self)->list :
         """
