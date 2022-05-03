@@ -7,13 +7,13 @@ import pygame
 import level
 
 class Boss (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level, MOVE_SECOND:float):
         """
         Basic constructor of a boss object
         
         input :
-            - anim : a list of all Surface used for the animation
-            - times : a list of all times (in ms) of all frame of the animation
+            - anims : a list of list of all Surface used for the animation
+            - times : a list of lis of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
             - activ : the coordinates where the player agro the boss
             - hp : starting health points
@@ -21,7 +21,8 @@ class Boss (entity.Entity) :
             - level : the level representation
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, "B", coord, hp, MOVE_SECOND)
+        super ().__init__ (anims, times, "B", coord, hp, MOVE_SECOND)
+        print (self.ID)
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
@@ -42,7 +43,8 @@ class Boss (entity.Entity) :
         """
         if (self.is_active) :
             self.music_time += self.music_clock.tick ()
-            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :                        # the boss have to play
+            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :   # the boss have to play
+                self.i_anim = 0                                                                             # not thinking
                 self.music_time = 0
                 # do the current actions
                 for action in self.current_action [0] :
@@ -57,6 +59,8 @@ class Boss (entity.Entity) :
                     print ("DEAD")
                     self.dead = True
                 self.music_time = 0
+            elif (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :                             # the boss is thinking
+                self.i_anim = 1                                                                             # thinking
     
     def remove_floor (self, level:level.Level, x:int, y:int) :
         """

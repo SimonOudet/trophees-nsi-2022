@@ -19,7 +19,7 @@ class Music (pulsable.Pulsable) :
         self.scales = [load_scale ("boss", i, orientations[i]) for i in range (nb_boss)]            # the scales, dictionnarys movement->Sound
         self.completed = [False for i in range (nb_boss)]
         self.ib = None
-        self.musics
+        self.musics = [pygame.mixer.Sound ("data/musics/boss" + str (i) + ".wav") for i in range (nb_boss)]
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
         self.inote = -1                                                                             # the note index
@@ -102,9 +102,9 @@ def load_scale (name:str, i:int, orientation:tuple)->dict :
     scale = {}
     with open ('data/scales/' + name + str (i) + '.txt','r') as fichier :
         lignes = fichier.readlines ()
-        for i in range (0, len (lignes), 3) :
-            x, y = tuple (map (int, lignes[i].rstrip ('\n').split ()))                              # \n for linux
-            if (orientation[0]) :                                                                   # we have to switch x and y
+        for l in range (0, len (lignes), 3) :
+            x, y = tuple (map (int, lignes[l].rstrip ('\n').split ()))                                                                                      # \n for linux
+            if (orientation[0]) :                                                                                                                           # we have to switch x and y
                 x, y = y, x
-            scale[(x * orientation[1][0], y * orientation[1][1])] = pygame.mixer.Sound ()           # TO COMPLETE
+            scale[(x * orientation[1][0], y * orientation[1][1])] = pygame.mixer.Sound ("data/sound/boss" + str (i) + "/" + lignes[l + 1].rstrip ('\n').split ()[0] + ".wav") # \n for linux, again
     return scale

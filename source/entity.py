@@ -4,19 +4,19 @@ import drawable
 import pygame
 
 class Entity (drawable.Drawable) :
-    def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
         """
         Basic constructor of a entity object
         
         input :
-            - anim : a list of all Surface used for the animation
-            - times : a list of all times (in ms) of all frame of the animation
+            - anims : a list of list of all Surface used for the animation
+            - times : a list of list of all times (in ms) of all frame of the animation
             - ID : unique identifier
             - coord : the coordinates of the top left corner
             - hp : starting health points
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, ID, coord)
+        super ().__init__ (anims, times, ID, coord)
         self.hp = hp
         self.moving_clock = pygame.time.Clock ()
         self.moving_time = 0

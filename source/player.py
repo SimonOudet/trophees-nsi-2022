@@ -4,23 +4,25 @@ import general as ge
 import entity
 import pygame
 import music
+import video
 
 class Player (entity.Entity) :
-    def __init__ (self, anim:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float):
         """
         Basic constructor of a Drawable object
         
         input :
-            - anim : a list of all Surface used for the animation
-            - times : a list of all times (in ms) of all frame of the animation
+            - anims : a list of list of all Surface used for the animation
+            - times : a list of list of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
             - hp : starting health points
             - rooms : a list of all the rooms representation of the level
             - nb_boss : the number of boss of the level
             - music : the music manager
+            - video : the video manager
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, "P", coord, hp, MOVE_SECOND)
+        super ().__init__ (anims, times, "P", coord, hp, MOVE_SECOND)
         self.fighting = False
         self.can_play = True        # if the player can play
         self.have_play = True       # if the player is in a playable duration
@@ -32,6 +34,9 @@ class Player (entity.Entity) :
         self.rooms = rooms
         self.ib = None              # the boss index
         self.nb_living_boss = nb_boss
+        self.is_dead = False
+        self.music = music
+        self.screen = video
     
     def move (self, coor:tuple, map:list, bosses:list)->bool :
         """
@@ -49,7 +54,7 @@ class Player (entity.Entity) :
             ret = super ().move (coor, map, self.forbiden_paths)
         elif (self.can_play) :                                                                  # he's fighting but he can play
             ret = super ().move (coor, map, self.forbiden_paths)
-            # self.music.move (coor)
+            self.music.move (coor)
             self.can_play = False
         for i in range (1, len (self.rooms)) :                                                  # starting with 1, 0 is the player starting room
             if (self.coord == self.rooms[i].get_activ_position ()) :                            # we are in a boss activation position
@@ -60,9 +65,11 @@ class Player (entity.Entity) :
             self.fighting = True
             self.boss = bosses[self.ib]
             self.boss.trigger ()
-            # self.music.start_fight (self.ib)
+            self.music.start_fight (self.ib)
             self.music_clock.tick ()
             print ("he's playing")
+        if (ret) :
+            self.screen.move_origin (coor)
         return ret
     
     def pulse (self, map:list, played:bool) :
@@ -90,12 +97,15 @@ class Player (entity.Entity) :
                 print ("he's playing")
             elif self.boss.is_dead () :                                                                 # ending of the fight
                 self.fighting = False
-                # self.music.stop_fight ()
+                self.music.stop_fight ()
                 self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                        # +1 beacause of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
                 print ("TP")
                 self.ib = None
                 self.nb_living_boss -= 1
+
+        if (map[self.coord[1]][self.coord[0]] == " ") :                                     # void
+            self.is_dead = True
     
     def is_fighting (self)->bool :
         """
@@ -116,4 +126,16 @@ class Player (entity.Entity) :
         output :
             - the boolean value
         """
-        return self.nb_living_boss == 0
+        return self.nb_living_boss == 0 or self.is_dead
+
+    def go_to (self, coor:tuple, map:list) :
+            """
+            Chnage the position of the entity
+            
+            input :
+                - coor : the new coordinates
+                - map : the level representation
+            """
+            previous = self.coord
+            if (super ().go_to (coor, map)) :
+                self.screen.move_origin ((self.coord[0] - previous[0], self.coord[1] - previous[1]))

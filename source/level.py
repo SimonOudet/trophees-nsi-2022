@@ -38,15 +38,15 @@ class Level :
         self.hiden_environment = []
         for i in range (len (self.map)) :
             for j in range (len (self.map[i])) :
-                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "P") : # ground
-                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
-                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (j, i)))
+                if (self.map[i][j] == "-") or (self.map[i][j] == "_") or (self.map[i][j] == "P") or (self.map[i][j] == "A") : # ground
+                    self.environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB)], ge.Val.GROUND_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB)], ge.Val.GROUND_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == "#") : # wall
-                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
-                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.WALL_PATH + "_not_vis", ge.Val.WALL_NB), ge.Val.WALL_TIMES, "G", (j, i)))
+                    self.environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.WALL_PATH + "_vis", ge.Val.WALL_NB)], ge.Val.WALL_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.WALL_PATH + "_not_vis", ge.Val.WALL_NB)], ge.Val.WALL_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == ".") : # door
-                    self.environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
-                    self.hiden_environment.append (drawable.Drawable (video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB), ge.Val.DOOR_TIMES, "G", (j, i)))
+                    self.environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
+                    self.hiden_environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
 
     def update_map (self, x:int, y:int) :
         """
@@ -62,8 +62,8 @@ class Level :
         # an adding :
         if (i == -1) :
             self.discover[(x, y)] = True
-            self.environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
-            self.hiden_environment.insert (0, drawable.Drawable (video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB), ge.Val.GROUND_TIMES, "G", (x, y)))
+            self.environment.insert (0, drawable.Drawable ([video.Video.load_animation (ge.Val.GROUND_PATH + "_vis", ge.Val.GROUND_NB)], ge.Val.GROUND_TIMES, "G", (x, y)))
+            self.hiden_environment.insert (0, drawable.Drawable ([video.Video.load_animation (ge.Val.GROUND_PATH + "_not_vis", ge.Val.GROUND_NB)], ge.Val.GROUND_TIMES, "G", (x, y)))
         # a removing
         else :
             self.environment.pop (i)
@@ -215,7 +215,7 @@ class Level :
         """
         player_vision = []
         algo.manatan_vision (5, self.map, player_pos, player_vision, self.discover)
-        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if vag.get_pos () in player_vision] + [self.player] # !CHANGE!
+        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [self.player] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if vag.get_pos () in player_vision] # !CHANGE!
 
     def get_pulsable (self)->list :
         """

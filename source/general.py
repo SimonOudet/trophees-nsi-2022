@@ -2,26 +2,29 @@
 
 class Val :
 
-    PLAYER_PATH = "characters/hero"
+    PLAYER_PATH = "characters/hero/hero"
     PLAYER_NB = 1
-    PLAYER_TIMES = [1000]
+    PLAYER_TIMES = [[1000]]
 
-    MONSTER_PATH = "characters/monster"
-    MONSTER_NB = 1
-    MONSTER_TIMES = [1000]
+    STRAY_PATH = "characters/monsters/stray"
+    STRAY_NB = 1
+    STRAY_TIMES = [[1000]]
+
+    BOSS_PATH = "characters/bosses/boss"
+    BOSS_NB = 1
+    BOSS_TIMES = [[1000], [1000]]
 
     GROUND_PATH = "terrain/ground"
     GROUND_NB = 1
-    GROUND_TIMES = [1000]
+    GROUND_TIMES = [[1000]]
 
     WALL_PATH = "terrain/wall"
     WALL_NB = 1
-    WALL_TIMES = [1000]
+    WALL_TIMES = [[1000]]
 
     DOOR_PATH = "terrain/door"
     DOOR_NB = 1
-    DOOR_TIMES = [1000]
-
+    DOOR_TIMES = [[1000]]
 
     TIME_PLAY = 4
     MUSIC_TO_TIME = 250 # to ms
@@ -40,8 +43,7 @@ class Room :
         self.door_position = door_position
     
     def set_activ_position (self, activ_position:tuple) :
-        if (self.activ_position == ()) :
-            self.activ_position = activ_position
+        self.activ_position = activ_position
     
     def set_orientation (self, orientation:str) :
         self.orientation = orientation

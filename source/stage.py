@@ -162,7 +162,7 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
                 rooms[-1].set_boss_position ((column + x_starting_coordinate, line + y_starting_coordinate))
             elif (stage[line + y_starting_coordinate][column + x_starting_coordinate] == ".") :
                 rooms[-1].set_door_position ((column + x_starting_coordinate, line + y_starting_coordinate))
-            elif (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "-") :
+            elif (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "A") :
                 rooms[-1].set_activ_position ((column + x_starting_coordinate, line + y_starting_coordinate))
 
 def path (stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :

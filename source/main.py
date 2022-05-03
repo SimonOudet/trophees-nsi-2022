@@ -27,17 +27,17 @@ def init ()-> list :
     MOVE_SECOND = 10
     # level genreration
     map, rooms = generate_map (20, 20)
-    # audio
-    # music = music.Music (len (rooms) - 1,  [room.get_orientation () for room in rooms]) # the first room is not a boss room
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), MOVE_SECOND), [], [], [])
-    # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
-    # add the vagabonds
-    current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[-1].get_boss_position (), 20, current_level.get_player (), MOVE_SECOND)])
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
+    # audio
+    audio = music.Music (len (rooms) - 1,  [room.get_orientation () for room in rooms]) # the first room is not a boss room
+    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
+    # add the bosses
+    current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
+    # add the vagabonds
+    # current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, rooms[-1].get_boss_position (), 20, current_level.get_player (), MOVE_SECOND)])
 
-    return screen, current_level
+    return screen, audio, current_level
 
 def generate_map (w:int, h:int)->list :
     """
@@ -72,7 +72,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", "-", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "A", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", "-", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
@@ -82,7 +82,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", "-", ".", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", "A", ".", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
@@ -96,7 +96,7 @@ def generate_map (w:int, h:int)->list :
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", ".", "-", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", ".", "A", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
@@ -117,7 +117,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
         ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", "-", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "A", " ", "#", "M"], 
         ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
@@ -127,7 +127,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", "#", "M"], 
         ["M", "#", " ", " ", "B", "#", "M"], 
         ["M", "#", " ", " ", " ", "#", "M"], 
-        ["M", ".", "-", " ", " ", "#", "M"], 
+        ["M", ".", "A", " ", " ", "#", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M"]
         ]
@@ -170,7 +170,7 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
                 actions.append (sequence.Action (type, (x * orientation[1][0], y * orientation[1][1])))
     return seq
 
-screen, current_level = init ()
+screen, audio, current_level = init ()
 played = False # if we have to resolve the player action
 
 # main loop
@@ -215,8 +215,8 @@ while not current_level.get_player ().is_end () :
                 dir = (1, 1)
                 played = True
         
-    if played and (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
-        screen.move_origin (dir)
+    if played : # the player has moved
+        current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())
 
     # pulse
     for p in current_level.get_pulsable () :            # note : the player always pulse before any monster
@@ -232,4 +232,3 @@ while not current_level.get_player ().is_end () :
     time.sleep (0.01)
 
 print ("GAME OVER")
-print ("you wine.")
