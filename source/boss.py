@@ -31,6 +31,7 @@ class Boss (entity.Entity) :
         self.activ = activ
         self.level = level
         self.dead = False
+        self.think = False
     
     def pulse (self, map:list, played:bool):
         """
@@ -43,11 +44,12 @@ class Boss (entity.Entity) :
         """
         if (self.is_active) :
             self.music_time += self.music_clock.tick ()
-            if (self.music_time >= (self.current_action [1] + ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :   # the boss have to play
+            if (self.music_time >= self.current_action[1] * ge.Val.MUSIC_TO_TIME) :                         # the boss have to play
+                print ("play")
                 self.i_anim = 0                                                                             # not thinking
                 self.music_time = 0
                 # do the current actions
-                for action in self.current_action [0] :
+                for action in self.current_action[0] :
                     if (action.get_type () == "D") :                                                        # a remove
                         self.remove_floor (self.level, action.get_dest ()[0] + self.coord[0], action.get_dest ()[1] + self.coord[1])
                     else :                                                                                  # an adding
@@ -59,7 +61,8 @@ class Boss (entity.Entity) :
                     print ("DEAD")
                     self.dead = True
                 self.music_time = 0
-            elif (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :                             # the boss is thinking
+            elif (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :          # the boss is thinking
+                print ("thinking")
                 self.i_anim = 1                                                                             # thinking
     
     def remove_floor (self, level:level.Level, x:int, y:int) :

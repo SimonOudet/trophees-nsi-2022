@@ -30,7 +30,7 @@ def init ()-> list :
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
     # audio
-    audio = music.Music (len (rooms) - 1,  [room.get_orientation () for room in rooms]) # the first room is not a boss room
+    audio = music.Music (len (rooms) - 1,  [rooms[i].get_orientation () for i in range (1, len (rooms))]) # the first room is not a boss room
     current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
     # add the bosses
     current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
@@ -77,6 +77,21 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
+        #[
+        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        #["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", "B", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "5", "4", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "6", "3", "1", "A", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", "2", "-", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
+        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        #],
         # clar
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
@@ -92,7 +107,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
-        # drums
+        # drums OK
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
@@ -121,7 +136,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
-        # trum
+        # trum OK
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 

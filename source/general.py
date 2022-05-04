@@ -26,9 +26,9 @@ class Val :
     DOOR_NB = 1
     DOOR_TIMES = [[1000]]
 
-    TIME_PLAY = 4
-    MUSIC_TO_TIME = 250 # to ms
-
+    TIME_PLAY = 0.5
+    MUSIC_TO_TIME = 900
+    
 class Room :
     def __init__ (self) :
         self.boss_position = ()
