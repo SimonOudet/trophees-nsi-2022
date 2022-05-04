@@ -159,10 +159,12 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
         for column in range (len (boss_rooms[line])) :
             if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == " ") and (boss_rooms[line][column] != " ") :
                 stage[line + y_starting_coordinate][column + x_starting_coordinate] = boss_rooms[line][column]
-            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "B") :
-                rooms[-1].set_boss_position((column + x_starting_coordinate, line + y_starting_coordinate))
-            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == ".") :
-                rooms[-1].set_door_position((column + x_starting_coordinate, line + y_starting_coordinate))
+            if (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "B") or (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "P") :
+                rooms[-1].set_boss_position ((column + x_starting_coordinate, line + y_starting_coordinate))
+            elif (stage[line + y_starting_coordinate][column + x_starting_coordinate] == ".") :
+                rooms[-1].set_door_position ((column + x_starting_coordinate, line + y_starting_coordinate))
+            elif (stage[line + y_starting_coordinate][column + x_starting_coordinate] == "A") :
+                rooms[-1].set_activ_position ((column + x_starting_coordinate, line + y_starting_coordinate))
 
 def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """

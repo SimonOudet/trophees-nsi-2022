@@ -42,6 +42,25 @@ class Sequence :
             - the boolean value
         """
         return self.size == 0
+    
+    def __str__(self)-> str:
+        copy = self.actions.copy ()
+        l = ""
+        while len (copy) != 0 :
+            a = copy.pop ()[0]
+            for i in a :
+                l += str (i) + " "
+            l += " / "
+        return l
+
+    def len (self)-> int :
+        """
+        Get the size of the Sequence
+        
+        output :
+            - the size
+        """
+        return self.size
 
 class Action :
     def __init__ (self, type:str, dest:list) :
