@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import drawable
+import random
+import level
 import pygame
+
 
 class Entity (drawable.Drawable) :
     def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
@@ -16,11 +19,21 @@ class Entity (drawable.Drawable) :
             - hp : starting health points
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anims, times, ID, coord)
+        super ().__init__ (anim, times, ID, coord)
+        self.hp_base = hp
         self.hp = hp
         self.moving_clock = pygame.time.Clock ()
         self.moving_time = 0
-        self.MOVE_SECOND = MOVE_SECOND
+        self.MOVE_SECOND = MOVE_SECOND        
+        
+    def get_hp (self)->int :
+        """
+        Return the basic healt points
+        
+        output :
+            - the basic healt points
+        """
+        return self.hp_base 
     
     def get_health (self)->int :
         """
@@ -50,7 +63,7 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
-    def move (self, coor:tuple, map:list, forbiden=[])->bool :
+    def move (self, coor:tuple, map:list, forbiden=(), damage=0)->bool :
         """
         Move the entity
         
@@ -68,8 +81,22 @@ class Entity (drawable.Drawable) :
             y = self.coord [1] + coor [1]
             size = (len (map[0]), len (map))
             if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
-                self.coord = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-                return True
+              coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+              #player vs stray
+              new_vags = []
+              vags = level.get_vagabonds ()
+              for vag in vags :
+                  if (coo == vag.get_pos ()) :
+                      coo = self.coord
+                      critical = random.random ()
+                      if critical > 0.5 :
+                          vag.set_health (vag.get_health() - (damage * 2))
+                      vag.set_health (vag.get_health() - damage)
+                  if (vag.get_health() > 0) :
+                      new_vags.append (vag)
+              level.Level.add_monsters(new_vags)
+              self.coord = coo
+              return True
         return False
     
     def go_to (self, coor:tuple, map:list) :

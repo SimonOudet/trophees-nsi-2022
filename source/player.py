@@ -7,7 +7,7 @@ import music
 import video
 
 class Player (entity.Entity) :
-    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, damage:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float):
         """
         Basic constructor of a Drawable object
         
@@ -28,6 +28,7 @@ class Player (entity.Entity) :
         self.have_play = True       # if the player is in a playable duration
         self.forbiden_paths = []
         self.boss = None
+        self.damage = damage
         self.time_wait = 0
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
