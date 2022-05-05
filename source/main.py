@@ -13,7 +13,7 @@ import time
 import boss
 import sys
 
-def init ()-> list :
+*** def init ()-> list :
     """
     The game initialization function
 
@@ -32,10 +32,9 @@ def init ()-> list :
     # audio
     audio = music.Music (len (rooms) - 1,  [rooms[i].get_orientation () for i in range (1, len (rooms))]) # the first room is not a boss room
     current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
-    # add the bosses
+    # adds the bosses
     current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
-    # add the vagabonds
-    # current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, rooms[-1].get_boss_position (), 20, current_level.get_player (), MOVE_SECOND)])
+    # adds the vagabonds
 
     return screen, audio, current_level
 
@@ -48,10 +47,10 @@ def generate_map (w:int, h:int)->list :
         - w : the width of the map
         - h : the height of the map
     output :
-        - a double array wich represent the map
+        - a double array that represents the map
     """
     return stage.stage_generator (64 * 2,
-    [
+    [   #start room
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
@@ -77,21 +76,6 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
-        #[
-        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
-        #["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", "B", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", "5", "4", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", "6", "3", "1", "A", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", " ", " ", "2", "-", " ", " ", " ", " ", " ", "#", "M"], 
-        #["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
-        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
-        #],
         # clar
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
@@ -107,7 +91,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
-        # drums OK
+        # drums
         [
         ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
@@ -136,7 +120,7 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
-        # trum OK
+        # trumpet
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
@@ -146,14 +130,11 @@ def generate_map (w:int, h:int)->list :
         ["M", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M"]
         ]
-    ]) # !TO CHANGE!
-    #for i in level :
-    #    print (i)
-    # return level, boss
+    ])
 
 def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
     """
-    Load, from a txt file, a sequence
+    Loads, from a .txt file, a sequence
     
     input :
         - name : the name of the file (boss for a boss...)
@@ -191,8 +172,6 @@ played = False # if we have to resolve the player action
 # main loop
 while not current_level.get_player ().is_end () :
 
-    # print (current_level.get_bosses ()[-1].get_current ()[0][0])
-
     # events
     for event in pygame.event.get () :
         if event.type == pygame.QUIT :
@@ -200,41 +179,37 @@ while not current_level.get_player ().is_end () :
         elif event.type == pygame.VIDEORESIZE :
                 screen.change_screen_size (event.size)
         # keyboard
-        if (pygame.key.get_pressed ()[pygame.K_a]) :
-        # if (pygame.key.get_pressed ()[pygame.K_KP4]) :           # left
+        if (pygame.key.get_pressed ()[pygame.K_a]) : # left
             dir = (-1, 0)
             played = True
-        elif (pygame.key.get_pressed ()[pygame.K_d]) :
-        # elif (pygame.key.get_pressed ()[pygame.K_KP6]) :         # right
+        elif (pygame.key.get_pressed ()[pygame.K_d]) : # right
             dir = (1, 0)
             played = True
-        elif (pygame.key.get_pressed ()[pygame.K_w]) :
-        # elif (pygame.key.get_pressed ()[pygame.K_KP8]) :         # top
+        elif (pygame.key.get_pressed ()[pygame.K_w]) : # up
             dir = (0, -1)
             played = True
-        elif (pygame.key.get_pressed ()[pygame.K_s]) : 
-        # elif (pygame.key.get_pressed ()[pygame.K_KP2]) :         # bottom
+        elif (pygame.key.get_pressed ()[pygame.K_s]) : # down
             dir = (0, 1)
             played = True
         elif (current_level.get_player ().is_fighting ()) :
-            if (pygame.key.get_pressed ()[pygame.K_q]) :       # diagonal left top
+            if (pygame.key.get_pressed ()[pygame.K_q]) :       # diagonal up-left
                 dir = (-1, -1)
                 played = True
-            elif (pygame.key.get_pressed ()[pygame.K_e]) :     # diagonal right top
+            elif (pygame.key.get_pressed ()[pygame.K_e]) :     # diagonal up-right
                 dir = (1, -1)
                 played = True
-            elif (pygame.key.get_pressed ()[pygame.K_z]) :     # diagonal left bottom
+            elif (pygame.key.get_pressed ()[pygame.K_z]) :     # diagonal down-left
                 dir = (-1, 1)
                 played = True
-            elif (pygame.key.get_pressed ()[pygame.K_x]) :     # diagonal right bottom
+            elif (pygame.key.get_pressed ()[pygame.K_x]) :     # diagonal down-right
                 dir = (1, 1)
                 played = True
         
-    if played : # the player has moved
+    if played : # the player moved
         current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())
 
     # pulse
-    for p in current_level.get_pulsable () :            # note : the player always pulse before any monster
+    for p in current_level.get_pulsable () :            # note : the player always pulses before any monster
         p.pulse (current_level.get_map (), played)
     played = False
 
