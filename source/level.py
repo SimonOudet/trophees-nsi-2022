@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import basic_math as ma
 import general as ge
 import drawable
 import monster
@@ -23,7 +22,7 @@ class Level :
         """
         self.map = map
         self.load_map ()
-        self.discover = {i.get_pos ():False for i in self.environment}
+        self.discover = {i.get_pos ():False for i in self.environment + self.door}
         self.player = player
         self.bosses = bosses
         self.vags = vags
@@ -35,6 +34,8 @@ class Level :
         corresponding to the environment
         """
         self.environment = []
+        self.door = []
+        self.hiden_door = []
         self.hiden_environment = []
         for i in range (len (self.map)) :
             for j in range (len (self.map[i])) :
@@ -45,8 +46,8 @@ class Level :
                     self.environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.WALL_PATH + "_vis", ge.Val.WALL_NB)], ge.Val.WALL_TIMES, "G", (j, i)))
                     self.hiden_environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.WALL_PATH + "_not_vis", ge.Val.WALL_NB)], ge.Val.WALL_TIMES, "G", (j, i)))
                 elif (self.map[i][j] == ".") : # door
-                    self.environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
-                    self.hiden_environment.append (drawable.Drawable ([video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
+                    self.door.append (drawable.Door ([video.Video.load_animation (ge.Val.DOOR_PATH + "_vis", ge.Val.DOOR_NB), video.Video.load_animation (ge.Val.LOCKED_DOOR_PATH + "_vis", ge.Val.LOCKED_DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
+                    self.hiden_door.append (drawable.Door ([video.Video.load_animation (ge.Val.DOOR_PATH + "_not_vis", ge.Val.DOOR_NB), video.Video.load_animation (ge.Val.LOCKED_DOOR_PATH + "_not_vis", ge.Val.LOCKED_DOOR_NB)], ge.Val.DOOR_TIMES, "G", (j, i)))
 
     def update_map (self, x:int, y:int) :
         """
@@ -214,8 +215,8 @@ class Level :
             - all the drawable objects of this level
         """
         player_vision = []
-        algo.manatan_vision (5, self.map, player_pos, player_vision, self.discover)
-        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [self.player] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if vag.get_pos () in player_vision] # !CHANGE!
+        algo.manatan_vision (self.player.get_vision (), self.map, player_pos, player_vision, self.discover)
+        return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [door for door in self.hiden_door if self.discover[door.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [door for door in self.door if door.get_pos () in player_vision] + [self.player] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if (vag.get_pos () in player_vision) and not vag.is_dead ()] # !CHANGE!
 
     def get_pulsable (self)->list :
         """
@@ -225,3 +226,15 @@ class Level :
             - all the pulsable objects of this level
         """
         return [self.player] + self.vags + self.bosses
+    
+    def lock_door (self, coord:tuple) :
+        """
+        Lock the door with the coord
+        coordinates
+        
+        input :
+            - coord : the coordinates of the door
+        """
+        i = algo.search_drawable (self.door, coord)
+        self.door[i].lock ()
+        self.hiden_door[i].lock ()

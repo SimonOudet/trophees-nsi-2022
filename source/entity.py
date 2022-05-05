@@ -2,7 +2,6 @@
 
 import drawable
 import random
-import level
 import pygame
 
 
@@ -19,12 +18,12 @@ class Entity (drawable.Drawable) :
             - hp : starting health points
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, ID, coord)
+        super ().__init__ (anims, times, ID, coord)
         self.hp_base = hp
         self.hp = hp
         self.moving_clock = pygame.time.Clock ()
         self.moving_time = 0
-        self.MOVE_SECOND = MOVE_SECOND        
+        self.MOVE_SECOND = MOVE_SECOND
         
     def get_hp (self)->int :
         """
@@ -63,6 +62,12 @@ class Entity (drawable.Drawable) :
         """
         self.hp += val
 
+    def is_dead (self) :
+        """
+        Return if the entity is dead
+        """
+        return self.hp <= 0
+
     def move (self, coor:tuple, map:list, forbiden=(), damage=0)->bool :
         """
         Moves the entity
@@ -75,6 +80,7 @@ class Entity (drawable.Drawable) :
         output :
 ***            - if we have to change our position
         """
+        played = True
         self.moving_time += self.moving_clock.tick ()
         if (self.moving_time >= 1000 / self.MOVE_SECOND) :
             self.moving_time = 0
@@ -82,22 +88,9 @@ class Entity (drawable.Drawable) :
             y = self.coord [1] + coor [1]
             size = (len (map[0]), len (map))
             if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
-              coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
-              #player vs stray
-              new_vags = []
-              vags = level.get_vagabonds ()
-              for vag in vags :
-                  if (coo == vag.get_pos ()) :
-                      coo = self.coord
-                      critical = random.random ()
-                      if critical > 0.5 :
-                          vag.set_health (vag.get_health() - (damage * 2))
-                      vag.set_health (vag.get_health() - damage)
-                  if (vag.get_health() > 0) :
-                      new_vags.append (vag)
-              level.Level.add_monsters(new_vags)
-              self.coord = coo
-              return True
+                coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+                self.coord = coo
+                return played
         return False
     
     def go_to (self, coor:tuple, map:list) :

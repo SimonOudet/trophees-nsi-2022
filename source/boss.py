@@ -2,11 +2,11 @@
 
 import general as ge
 import sequence
-import entity
+import monster
 import pygame
 import level
 
-class Boss (entity.Entity) :
+class Boss (monster.Monster) :
     def __init__ (self, anims:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level, MOVE_SECOND:float):
         """
         Basic constructor of a boss object
@@ -21,8 +21,7 @@ class Boss (entity.Entity) :
             - level : the level representation
             - MOVE_SECOND : the number of moves allowed for a second
         """
-        super ().__init__ (anims, times, "B", coord, hp, MOVE_SECOND)
-        print (self.ID)
+        super ().__init__ (anims, times, coord, hp, MOVE_SECOND, "B")
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
@@ -31,6 +30,7 @@ class Boss (entity.Entity) :
         self.activ = activ
         self.level = level
         self.dead = False
+        self.locked = False
         self.think = False
 
     def pulse (self, map:list, played:bool):
@@ -45,7 +45,6 @@ class Boss (entity.Entity) :
         if (self.is_active) :
             self.music_time += self.music_clock.tick ()
             if (self.music_time >= self.current_action[1] * ge.Val.MUSIC_TO_TIME) :                         # the boss have to play
-                print ("play")
                 self.i_anim = 0                                                                             # not thinking
                 self.music_time = 0
                 # do the current actions
@@ -62,7 +61,6 @@ class Boss (entity.Entity) :
                     self.dead = True
                 self.music_time = 0
             elif (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :          # the boss is thinking
-                print ("thinking")
                 self.i_anim = 1                                                                             # thinking
 
     def remove_floor (self, level:level.Level, x:int, y:int) :
@@ -103,8 +101,7 @@ class Boss (entity.Entity) :
         """
         self.is_active = True
         self.music_clock.tick ()
-        print ("activation : ", self.ID)
-
+        
     def get_current (self)-> tuple :
         """
         Returns the current action
@@ -122,3 +119,9 @@ class Boss (entity.Entity) :
             - the boolean answer
         """
         return self.dead
+    
+    def lock (self, coord:tuple) :
+        """
+        Lock a door
+        """
+        self.level.lock_door (coord)

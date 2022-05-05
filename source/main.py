@@ -25,16 +25,17 @@ def init ()-> list :
     pygame.init ()
 
     MOVE_SECOND = 10
-    # level generation
-    map, rooms = generate_map (20, 20)
+    # level genreration
+    map, rooms, stray_pos = generate_map (20, 20)
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
     # audio
     audio = music.Music (len (rooms) - 1,  [rooms[i].get_orientation () for i in range (1, len (rooms))]) # the first room is not a boss room
-    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
-    # adds the bosses
+    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, 5, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
+    # add the bosses
     current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
-    # adds the vagabonds
+    # add the vagabonds
+    current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, stray_pos[i], 20, current_level.get_player (), MOVE_SECOND) for i in range (len (stray_pos))])
 
     return screen, audio, current_level
 
@@ -93,19 +94,27 @@ def generate_map (w:int, h:int)->list :
         ],
         # drums
         [
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
-        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", ".", "A", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "B", "#", "M"], 
-        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", ".", "A", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"],         
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "B", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
         ],
         # bass
         [
@@ -191,6 +200,9 @@ while not current_level.get_player ().is_end () :
         elif (pygame.key.get_pressed ()[pygame.K_s]) : # down
             dir = (0, 1)
             played = True
+        elif (pygame.key.get_pressed ()[pygame.K_p]) :              # wait
+            dir = (0, 0)
+            played = True
         elif (current_level.get_player ().is_fighting ()) :
             if (pygame.key.get_pressed ()[pygame.K_q]) :       # diagonal up-left
                 dir = (-1, -1)
@@ -219,6 +231,6 @@ while not current_level.get_player ().is_end () :
         surf, coor = d.draw ()
         screen.add (surf, coor)
     screen.refresh ()
-    time.sleep (0.01)
+    # time.sleep (0.01)
 
 print ("GAME OVER")

@@ -48,3 +48,23 @@ class Drawable (pulsable.Pulsable) :
 
     def __str__ (self) -> str:
         return self.ID
+
+class Door (Drawable) :
+    def __init__ (self, anims:list, times:list, ID:str, coord:tuple) :
+        """
+        Basic constructor of a Drawable object
+        
+        input :
+            - anim : a list of list of all Surface used for the animation
+            - times : a list of list of all times (in ms) of all frame of the animation
+            - ID : unique identifier type (P, M...)
+            - coord : the coordinates of the top left corner
+        """
+        super ().__init__ (anims, times, ID, coord)
+    
+    def lock (self) :
+        """
+        Switch from a unlocked texture
+        to a locked
+        """
+        self.i_anim = 1

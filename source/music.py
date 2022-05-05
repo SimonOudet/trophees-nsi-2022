@@ -84,8 +84,8 @@ def load_times (name:str, i:int)->list :
     with open ('data/notes_times/' + name + str (i) + '.txt','r') as fichier :
         # for linux :
         for ligne in fichier :
-            ligne = ligne.rstrip ('\n')
-            times.append (int (ligne))
+            ligne = ligne.rstrip ('\n')         # change rstrip ('\n') to rstrip('\r\n') for windows
+            times.append (int (ligne)) #  - ge.Val.TIME_PLAY removing the time to play for translate from note time to boss thinking time
     return times
 
 def load_scale (name:str, i:int, orientation:tuple)->dict :
@@ -103,8 +103,8 @@ def load_scale (name:str, i:int, orientation:tuple)->dict :
     with open ('data/scales/' + name + str (i) + '.txt','r') as fichier :
         lignes = fichier.readlines ()
         for l in range (0, len (lignes), 3) :
-            x, y = tuple (map (int, lignes[l].rstrip ('\n').split ()))                               
+            x, y = tuple (map (int, lignes[l].rstrip ('\n').split ()))              # change rstrip ('\n') to rstrip('\r\n') for windows
             if (orientation[0]) :                                                                                                                           # we have to switch x and y
-                x, y = y, x                                                       # \n for linux
+                x, y = y, x
             scale[(x * orientation[1][0], y * orientation[1][1])] = pygame.mixer.Sound ("data/sound/boss" + str (i) + "/" + lignes[l + 1].rstrip ('\n').split ()[0] + ".wav") # \n for linux, again
     return scale
