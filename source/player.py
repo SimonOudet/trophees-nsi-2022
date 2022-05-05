@@ -8,7 +8,7 @@ import music
 import video
 
 class Player (entity.Entity) :
-    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, damage:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, damage:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float, starting_vision=5):
         """
         Basic constructor of a Drawable object
         
@@ -22,6 +22,7 @@ class Player (entity.Entity) :
             - music : the music manager
             - video : the video manager
             - MOVE_SECOND : the number of moving allowed for a second
+            - starting_vision : the starting vision range of the player
         """
         super ().__init__ (anims, times, "P", coord, hp, MOVE_SECOND)
         self.fighting = False
@@ -38,6 +39,8 @@ class Player (entity.Entity) :
         self.nb_living_boss = nb_boss
         self.music = music
         self.screen = video
+        self.vision = starting_vision
+        self.starting_vision = starting_vision
     
     def move (self, coor:tuple, map:list, bosses:list, vags:list, forbiden=())->bool :
         """
@@ -78,6 +81,7 @@ class Player (entity.Entity) :
                 self.forbiden_paths.append (self.rooms[i].get_door_position ())
                 break
         if (self.ib != None) and not self.fighting :                                            # we juste activate a boss
+            self.vision = 40                                                                    # now we can see all the room
             self.fighting = True
             self.boss = bosses[self.ib]
             self.boss.trigger ()
@@ -112,11 +116,13 @@ class Player (entity.Entity) :
                 self.can_play = True
                 self.music_time = 0
             elif self.boss.is_dead () :                                                                     # ending of the fight
+                self.vision = self.starting_vision
                 self.fighting = False
                 self.music.stop_fight ()
                 self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                            # +1 beacause of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
                 print ("TP")
+                self.boss.lock (self.coord)
                 self.ib = None
                 self.nb_living_boss -= 1
 
@@ -155,3 +161,12 @@ class Player (entity.Entity) :
             previous = self.coord
             if (super ().go_to (coor, map)) :
                 self.screen.move_origin ((self.coord[0] - previous[0], self.coord[1] - previous[1]))
+    
+    def get_vision (self)->int :
+        """
+        Return the range of the player vision
+        
+        output :
+            - the vision range
+        """
+        return self.vision

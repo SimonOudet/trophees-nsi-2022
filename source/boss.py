@@ -31,6 +31,7 @@ class Boss (monster.Monster) :
         self.activ = activ
         self.level = level
         self.dead = False
+        self.locked = False
         self.think = False
     
     def pulse (self, map:list, played:bool):
@@ -62,9 +63,8 @@ class Boss (monster.Monster) :
                     self.dead = True
                 self.music_time = 0
             elif (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :          # the boss is thinking
-                print ("thinking")
                 self.i_anim = 1                                                                             # thinking
-    
+
     def remove_floor (self, level:level.Level, x:int, y:int) :
         """
         Remove the floor of the given coordinates
@@ -122,3 +122,9 @@ class Boss (monster.Monster) :
             - the boolean answer
         """
         return self.dead
+    
+    def lock (self, coord:tuple) :
+        """
+        Lock a door
+        """
+        self.level.lock_door (coord)
