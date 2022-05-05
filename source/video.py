@@ -18,10 +18,10 @@ class Video :
     
     def move_origin (self, coor:tuple) :
         """
-        Move the origin of the display
+        Moves the origin of the display
         
         input :
-            - coor : the coordinates that will increase the currents origin
+            - coor : the coordinates that will increase the current origin
         """
         self.origin = (self.origin[0] - coor[0], self.origin[1] - coor[1])
     
@@ -37,7 +37,7 @@ class Video :
 
     def get_screen_size (self)->tuple :
         """
-        Get the screen size
+        Returns the screen size
         
         output :
             - a tuple with the screen size
@@ -46,7 +46,7 @@ class Video :
 
     def get_screen (self)->pygame.Surface :
         """
-        Get the used screen
+        Returns the used screen
         
         output :
             - the used screen
@@ -55,7 +55,7 @@ class Video :
 
     def set_screen (self, screen:pygame.Surface) :
         """
-        Change the used screen
+        Changes the used screen
 
         input :
             - screen : the new screen
@@ -64,7 +64,7 @@ class Video :
 
     def add (self, surf:pygame.Surface, coor:tuple) :
         """
-        Draw a Surface into the screen
+        Draws a Surface into the screen
 
         input :
             - surf : the surface to draw
@@ -74,13 +74,13 @@ class Video :
 
     def cancel (self) :
         """
-        Reset the screen in black
+        Resets the screen to black
         """
         self.screen.fill ("black")
     
     def refresh (self) :
         """
-        Refresh the screen in order
+        Refreshes the screen in the order
         to make visible the changes
         """
         pygame.display.flip ()
@@ -88,7 +88,7 @@ class Video :
     @staticmethod
     def load_animation (path:str, n:int)->list :
         """
-        Return a list of Surface corresponding
+        Returns a list of Surface corresponding
         to a special animation
     
         input :

@@ -8,7 +8,7 @@ import pygame
 class Entity (drawable.Drawable) :
     def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
         """
-        Basic constructor of a entity object
+        Basic constructor of an entity object
         
         input :
             - anims : a list of list of all Surface used for the animation
@@ -27,25 +27,25 @@ class Entity (drawable.Drawable) :
         
     def get_hp (self)->int :
         """
-        Return the basic healt points
+        Returns the basic health points
         
         output :
-            - the basic healt points
+            - the basic health points
         """
         return self.hp_base 
     
     def get_health (self)->int :
         """
-        Return the current amount of healt points
+        Returns the current amount of health points
         
         output :
-            - the current amount of healt points
+            - the current amount of health points
         """
         return self.hp
 
     def set_health (self, val:int) :
         """
-        Change the current amount of healt points
+        Changes the current amount of health points
         
         input :
             - val : the new value
@@ -54,7 +54,7 @@ class Entity (drawable.Drawable) :
     
     def add_health (self, val:int) :
         """
-        Increase the current amount of healt points
+        Increases the current amount of health points
         (use negative values for a decrease)
         
         input :
@@ -70,14 +70,15 @@ class Entity (drawable.Drawable) :
 
     def move (self, coor:tuple, map:list, forbiden=(), damage=0)->bool :
         """
-        Move the entity
+        Moves the entity
         
         input :
-            - coor : the coordinates that will increase the currents coordinates
+***            - coor : the new coordinates of the entity
             - map : the level representation
-            - forbiden : a list of tuple with positions forbiden
+            - forbiden : a list of tuple with positions forbidden
+            - damage : 
         output :
-            - if we have change our position
+***            - if we have to change our position
         """
         played = True
         self.moving_time += self.moving_clock.tick ()
@@ -94,7 +95,7 @@ class Entity (drawable.Drawable) :
     
     def go_to (self, coor:tuple, map:list) :
         """
-        Chnage the position of the entity
+        Changes the position of the entity
         
         input :
             - coor : the new coordinates

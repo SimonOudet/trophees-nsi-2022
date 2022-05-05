@@ -11,12 +11,13 @@ class Player (entity.Entity) :
     def __init__ (self, anims:list, times:list, coord:tuple, hp:int, damage:int, rooms:list, nb_boss:int, music:music.Music, video:video.Video, MOVE_SECOND:float, starting_vision=5):
         """
         Basic constructor of a Drawable object
-        
+
         input :
             - anims : a list of list of all Surface used for the animation
             - times : a list of list of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
             - hp : starting health points
+            - damage : the amout of damage the player deals every attack
             - rooms : a list of all the rooms representation of the level
             - nb_boss : the number of boss of the level
             - music : the music manager
@@ -44,15 +45,15 @@ class Player (entity.Entity) :
     
     def move (self, coor:tuple, map:list, bosses:list, vags:list, forbiden=())->bool :
         """
-        Move the entity
-        
+        Moves the entity
+
         input :
-            - coor : the coordinates that will increase the currents coordinates
+            - coor : the coordinates that will increase the current coordinates
             - map : the level representation
             - bosses : a list of the bosses
             - vags : a list of the strays
         output :
-            - if we have change our position
+            - if we changed our position
         """
         ret = False
         if not self.fighting :                                                                  # normal, he's not fighting
@@ -77,7 +78,7 @@ class Player (entity.Entity) :
             self.can_play = False
         for i in range (1, len (self.rooms)) :                                                  # starting with 1, 0 is the player starting room
             if (self.coord == self.rooms[i].get_activ_position ()) :                            # we are in a boss activation position
-                self.ib = i - 1                                                                 # -1 beacause of the first room, the player starting room
+                self.ib = i - 1                                                                 # -1 because of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[i].get_door_position ())
                 break
         if (self.ib != None) and not self.fighting :                                            # we juste activate a boss
@@ -90,14 +91,14 @@ class Player (entity.Entity) :
         if (ret) :
             self.screen.move_origin (coor)
         return ret
-    
+
     def pulse (self, map:list, played:bool) :
         """
         A refresh function called each frame
         you can do what you want here
 
         input :
-            - map : a double array wich represent a map of the level (see Level class)
+            - map : a double array that represents the map of the level (see Level class)
             - played : if we have to resolve the player action
         """
         if self.fighting :
@@ -115,7 +116,7 @@ class Player (entity.Entity) :
                 self.vision = self.starting_vision
                 self.fighting = False
                 self.music.stop_fight ()
-                self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                            # +1 beacause of the first room, the player starting room
+                self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                            # +1 because of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
                 self.boss.lock (self.coord)
                 self.ib = None
@@ -133,11 +134,11 @@ class Player (entity.Entity) :
             - the boolean value
         """
         return self.fighting
-    
+
     def is_end (self)-> bool :
         """
         If the player has
-        beaten all of the boss
+        beaten all of the bosses
         of the level
 
         output :
@@ -147,8 +148,8 @@ class Player (entity.Entity) :
 
     def go_to (self, coor:tuple, map:list) :
             """
-            Chnage the position of the entity
-            
+            Changes the position of the entity
+
             input :
                 - coor : the new coordinates
                 - map : the level representation

@@ -9,10 +9,10 @@ class Drawable (pulsable.Pulsable) :
     def __init__ (self, anims:list, times:list, ID:str, coord:tuple) :
         """
         Basic constructor of a Drawable object
-        
+
         input :
             - anim : a list of list of all Surface used for the animation
-            - times : a list of list of all times (in ms) of all frame of the animation
+            - times : a list of list of all times (in ms) of all the frames of the animation
             - ID : unique identifier type (P, M...)
             - coord : the coordinates of the top left corner
         """
@@ -26,7 +26,7 @@ class Drawable (pulsable.Pulsable) :
         self.i = 0 # current frame
         self.ID = ID + str (Drawable.counter)
         Drawable.counter += 1
-    
+
     def get_pos (self)->tuple :
         return self.coord
 
@@ -45,7 +45,7 @@ class Drawable (pulsable.Pulsable) :
             if (self.i == len (self.anims[self.i_anim])) :
                 self.i = 0
         return self.anims [self.i_anim][self.i], self.coord
-    
+
     def __str__ (self) -> str:
         return self.ID
 

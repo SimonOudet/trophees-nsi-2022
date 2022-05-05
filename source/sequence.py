@@ -13,7 +13,7 @@ class Sequence :
     
     def get_actions_time (self)->tuple :
         """
-        Get the action and the time of a turn
+        Returns the action and the time of a turn
         
         output :
             - the actions (tuple of Action)
@@ -25,7 +25,7 @@ class Sequence :
     
     def add_actions (self, actions:list, time:int) :
         """
-        Add a serie of action
+        Adds a serie of actions
 
         input :
             - actions : a list with all the actions
@@ -38,7 +38,7 @@ class Sequence :
         """
         If the sequence is empty
         
-        outtput :
+        output :
             - the boolean value
         """
         return self.size == 0
@@ -55,7 +55,7 @@ class Sequence :
 
     def len (self)-> int :
         """
-        Get the size of the Sequence
+        Returns the size of the Sequence
         
         output :
             - the size
@@ -79,7 +79,7 @@ class Action :
     
     def get_type (self)->str :
         """
-        Get the type of the represented action
+        Returns the type of the represented action
         
         output :
             - the type
@@ -88,7 +88,7 @@ class Action :
     
     def get_dest (self)->list :
         """
-        Get the destination of the represented action
+        Returns the destination of the represented action
         
         output :
             - the destination

@@ -12,11 +12,11 @@ class Music (pulsable.Pulsable) :
         
         input :
             - nb_boss : the number of bosses of the level
-            - orientations : a list of all the orientation of the boss rooms
+            - orientations : a list of all the orientations of the boss rooms
         """
         self.times_notes = [load_times ("boss", i) for i in range (nb_boss)]                        # for all fights, a list of the notes duration
         self.chanels = [pygame.mixer.Channel (i) for i in range (nb_boss)]                          # the audio channels, the last is alway the playing channel (you will see)
-        self.scales = [load_scale ("boss", i, orientations[i]) for i in range (nb_boss)]            # the scales, dictionnarys movement->Sound
+***        self.scales = [load_scale ("boss", i, orientations[i]) for i in range (nb_boss)]            # the scales, dictionnary movement->Sound
         self.completed = [False for i in range (nb_boss)]
         self.ib = None
         self.musics = [pygame.mixer.Sound ("data/musics/boss" + str (i) + ".wav") for i in range (nb_boss)]
@@ -40,7 +40,7 @@ class Music (pulsable.Pulsable) :
 
     def start_fight (self, ib:int) :
         """
-        Sart a music fight
+        Starts a music fight
         
         input :
             - ib : the boss id
@@ -52,7 +52,7 @@ class Music (pulsable.Pulsable) :
     
     def stop_fight (self) :
         """
-        Stop the music fight
+        Stops the music fight
         """
         pygame.mixer.stop ()
         self.completed[self.ib] = True
@@ -72,7 +72,7 @@ class Music (pulsable.Pulsable) :
     
 def load_times (name:str, i:int)->list :
     """
-    Load, from a txt file, a time list
+    Load, from a .txt file, a time list
     
     input :
         - name : the name of the file (boss for a boss...)
@@ -90,12 +90,12 @@ def load_times (name:str, i:int)->list :
 
 def load_scale (name:str, i:int, orientation:tuple)->dict :
     """
-    Load, from a txt file, a scale (a dictionnary movement->Sound)
+    Loads, from a .txt file, a scale (a dictionnary movement->Sound)
     
     input :
         - name : the name of the file (boss for a boss...)
         - i : the index
-        - orientation : the orientation (a tuple with : (if we have to switch x and y, a tupple for the coordinates)
+        - orientation : the orientation (a tuple with : if we have to switch x and y (bool), a tuple for the coordinates)
     output :
         - the scale dictionnary
     """

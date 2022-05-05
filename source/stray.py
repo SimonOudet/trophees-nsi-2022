@@ -5,19 +5,19 @@ import random
 import algo
 
 class Stray (monster.Monster) :
-    
+
     def __init__(self, anims, times, coord, hp, player, MOVE_SECOND:float) :
         super().__init__(anims, times, coord, hp, MOVE_SECOND)
         self.player = player
         self.agro = False
-     
+
     def pulse (self, map:list, played:bool) :
         """
         A refresh function called each frame
         you can do what you want here
 
         input :
-            - map : a double array wich represent a map of the level (see Level class)
+            - map : a double array that represents the map of the level (see Level class)
             - played : if we have to resolve the player action
         """
         if played == True and not self.is_dead ():

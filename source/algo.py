@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 
 def a_star_path (map:list, src:tuple, dst:tuple)-> list :
     """
-    Return the a star path between src and dst
+    Returns the a star path between src and dst
 
     input :
         - map : the map
-        - src : the coordinates of the start
-        - dst : the coordinates of the end
+        - src : the coordinates of the starting point
+        - dst : the coordinates of the ending point
     output :
-        - the list with all the coordinates
+        - a list with all the coordinates
     """
     closed = {src:None}
     open = {}
@@ -17,13 +18,13 @@ def a_star_path (map:list, src:tuple, dst:tuple)-> list :
 
 def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
     """
-    Find the a star path between src and dst
+    Finds the a star path between src and dst
 
     input :
         - map : the map
-        - src : the coordinates of the start
-        - dst : the coordinates of the end
-        - closed : the coordinates already check
+        - src : the coordinates of the starting point
+        - dst : the coordinates of the ending point
+        - closed : the coordinates already checked
     """
     if (src == dst) :
         return True
@@ -42,7 +43,7 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
         if (open[node][0] < min) :
             min = open[node][0]
             soon_father = (node, open[node][1])
-    if (soon_father[1] == None) : # no way
+***    if (soon_father[1] == None) : # no way
         return False
     closed[soon_father[0]] = soon_father[1]
     open.pop (soon_father[0])
@@ -50,13 +51,13 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
 
 def get_neighbours (coor:tuple, map:list)-> list :
     """
-    Return the neighbours of the given coordinates
-    
+    Returns the neighbours of the given coordinates
+
     input :
         - coor : the coordinates
         - map : the map
     output :
-        - a list with all cordinates of all neighbours
+        - a list with all the coordinates of all the neighbours
     """
     nei = []
     for x in [coor[0] - 1, coor[0] + 1] :
@@ -69,13 +70,13 @@ def get_neighbours (coor:tuple, map:list)-> list :
 
 def get_diag_neighbours (coor:tuple, map:list)-> list :
     """
-    Return the neighbours of the given coordinates (with diagonales)
-    
+    Returns the neighbours of the given coordinates (with diagonals)
+
     input :
         - coor : the coordinates
         - map : the map
     output :
-        - a list with all cordinates of all neighbours
+        - a list with all the coordinates of all the neighbours
     """
     nei = []
     for x in range (coor[0] - 1, coor[0] + 2) :
@@ -86,24 +87,24 @@ def get_diag_neighbours (coor:tuple, map:list)-> list :
 
 def is_in_map (coor:tuple, map:list)-> bool :
     """
-    Return if the given coordinates is in the map
-    
+    Returns if the given coordinates are in the map
+
     input :
         - coor : the coordinates
         - map : the map
     output :
-        - if the given coordinates is in the map
+        - True if the given coordinates are in the map, False if they are not
     """
     return (coor[0] >= 0) and (coor[1] >= 0) and (coor[0] < len (map[0])) and (coor[1] < len (map))
 
 def get_quality (src:tuple, test:tuple, dst:tuple)-> int :
     """
-    Return the quality of a coordinates
-    
+    Returns the quality of the given coordinates
+
     input :
-        - src : the sart
+        - src : the starting point
         - test : the coordinates to test
-        - dst : the end
+        - dst : the ending point
     output :
         - the quality
     """
@@ -111,10 +112,10 @@ def get_quality (src:tuple, test:tuple, dst:tuple)-> int :
 
 def manatan (a:tuple, b:tuple)-> int :
     """
-    Return manathan distance between a and b
-    
+    Returns the manathan distance between a and b
+
     input :
-        - a : the sart
+        - a : the starting point
         - b : the test
     output :
         - the distance
@@ -123,14 +124,14 @@ def manatan (a:tuple, b:tuple)-> int :
 
 def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from_blind=False) :
     """
-    Return a list wich represent the vision
-    
+    Returns a list wich represents the vision of the player
+
     input :
         - n : the manatan width
         - map : the map
-        - coor : the root coor
-        - coors : the coordinates wich represent the vision
-        - discover : the list of the discovered place
+        - coor : the root coordinates
+        - coors : the coordinates that represent the vision
+        - discover : the list of the discovered places
         - from_blind : if the origin is a wall or a door (both of them stop vision)
     """
     discover[coor] = True
@@ -146,8 +147,8 @@ def manatan_vision (n:int, map:list, coor:tuple, coors:list, discover:dict, from
 
 def get_path (dict:dict, src:tuple)-> list :
     """
-    Return the path of the a_star function
-    
+    Returns the path of the a_star function
+
     input :
         - dict : the dictionnary changed by a_star
         - src : the source
@@ -162,7 +163,7 @@ def search_drawable (drawables:list, coords:tuple)-> int :
     """
     Search in a given list of Drawable object
     the index of the Drawable with the coords coordinates
-    
+
     input :
         - drawables : the drawables list
         - coords : the coordinates to find

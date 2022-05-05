@@ -14,7 +14,7 @@ class Level :
         Basic constructor of a Level object
         
         input :
-            - map : a double array wich represent a map of the level ! TO COMPLETE !
+            - map : a double array wich represent a map of the level
             - player : the player of the level
             - bosses : an array with all the bosses of the level
             - vags : an array with all the vagabonds of the level
@@ -30,7 +30,7 @@ class Level :
     
     def load_map (self) :
         """
-        Load the drawables objects
+        Loads the drawables objects
         corresponding to the environment
         """
         self.environment = []
@@ -53,7 +53,7 @@ class Level :
         """
         A load map like function but optimized
         for a little change and only for ground
-        changing in the boss context
+        changing in the bossfight context
         
         input :
             - x : the x coordinate
@@ -72,7 +72,7 @@ class Level :
 
     def get_map (self)->list :
         """
-        Get the map of the level
+        Returns the map of the level
         
         output :
             - the map of the level
@@ -81,29 +81,29 @@ class Level :
 
     def set_map (self, map:list) :
         """
-        Create a map for this level
+        Creates a map for this level
         
         input :
-            - map : a double array wich represent a map of the new level ! TO COMPLETE !
+            - map : a double array wich represents a map of the new level
         """
         self.map = map
         self.load_map ()
     
     def change_map (self, x:int, y:int, val:str) :
         """
-        Change the map of the level
+        Changes the map of the level
         
         input :
-            - x : the x ccordinate
+            - x : the x coordinate
             - y : the y coordinate
-            - val : the new value of this place
+            - val : the new value at the coordinates
         """
         self.map [y][x] = val
-        self.update_map (x, y) # ! CHANGE ! (only if an other entity than a boss use this function)
+        self.update_map (x, y) # ! CHANGE ! (only if an other entity than a boss uses this function)
     
     def get_player (self)->player.Player :
         """
-        Get the player of this level
+        Returns the player of this level
         
         output :
             - the player
@@ -121,7 +121,7 @@ class Level :
     
     def get_bosses (self)->list :
         """
-        Get all the bosses of this level
+        Returns all the bosses of this level
         
         output :
             - a list with all bosses 
@@ -139,7 +139,7 @@ class Level :
     
     def set_monsters (self, monsters:list, are_bosses=False) :
         """
-        Modify all the monsters of the level
+        Modifies all the monsters of the level
         
         input :
             - monsters : the new list of the level monsters
@@ -152,10 +152,10 @@ class Level :
 
     def change_monster (self, i:int, monster:monster.Monster, is_boss=False) :
         """
-        Modify a monster of this level
+        Modifies a monster of this level
         
         input :
-            - i : the number of te monster
+            - i : the number of the monster
             - monster : the new monster
             - is_boss : if the monster is a boss
         """
@@ -166,7 +166,7 @@ class Level :
 
     def add_monsters (self, monsters:list, is_boss=False) :
         """
-        Add some monsters to the level
+        Adds some monsters to the level
         
         input :
             - monsters : a list of monsters objects
@@ -179,7 +179,7 @@ class Level :
 
     def get_loots (self)->list :
         """
-        Get all the loots of this level
+        Returns all the loot of this level
         
         output :
             - a list with all loots 
@@ -188,7 +188,7 @@ class Level :
 
     def set_loots (self, loots:list) :
         """
-        Modify all the loots of the level
+        Modifies the loot of the level
         
         input :
             - loots : the new list of the level loots
@@ -197,7 +197,7 @@ class Level :
 
     def change_loot (self, i:int, loot:str) :
         """
-        Modify a loot of this level
+        Modifies a loot of this level
         
         input :
             - i : the number of the loot
@@ -207,12 +207,12 @@ class Level :
 
     def get_drawable (self, player_pos:tuple)->list :
         """
-        Get all the drawable object of this level
+        Returns all the drawable objects of this level
 
         input :
             - player_pos : the player position
         output :
-            - all the drawable object of this level
+            - all the drawable objects of this level
         """
         player_vision = []
         algo.manatan_vision (self.player.get_vision (), self.map, player_pos, player_vision, self.discover)
@@ -220,10 +220,10 @@ class Level :
 
     def get_pulsable (self)->list :
         """
-        Get all the pulsable object of this level
+        Get all the pulsable objects of this level
 
         output :
-            - all the pulsable object of this level
+            - all the pulsable objects of this level
         """
         return [self.player] + self.vags + self.bosses
     
