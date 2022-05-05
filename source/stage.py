@@ -5,10 +5,10 @@ import random
 
 def stage_generator (stage_size:int, table_boss_rooms:list)->list :
     """
-    function that generates a stage of the games
+    function that generates a stage of the game
     
     input : 
-        - stage_size : the bigest size of the square representing the empty stage, the size of the floor must be greater than the maximum width or length of the largest boss room
+        - stage_size : the biggest size of the square representing the empty stage, the size of the floor must be greater than the maximum width or length of the largest boss room
         - table_boss_rooms : table containing each boss room, without the walls, that the floor will contain. 
             " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground, "B" = boss, "_" = path
             Each element of the table will be an table containing the data allowing the 
@@ -22,9 +22,9 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
               ["M", "M", "M", "M", "M", "M"]
             ]
     output : 
-        - stage : a double-entry table representing a floor
-        - rooms : a table containing all coordination we need for the restr of the game
-        - stray_position : a table containing stray's coordination 
+        - stage : a table representing a floor
+        - rooms : a table containing all coordinates we need for the rest of the game
+        - stray_position : a table containing stray's coordinates 
 
     """
     rooms = []
@@ -47,7 +47,7 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         elif (compass == "east") :
             # 90 degres
             rooms[-1].set_orientation ((True, (1, -1)))
-            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 90 degres = swap the width and the height
+            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 90 degres = swaps the width and the height
             for line in range (len (boss_room)) :
                 for column in range (len (boss_room[line])) :
                     new_boss_room[len (boss_room[line]) - 1 - column][line] = boss_room[line][column]
@@ -55,7 +55,7 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
         elif (compass == "west") :
             # 270 degres
             rooms[-1].set_orientation ((True, (-1, 1)))
-            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 270 degres = swap the width and the height
+            new_boss_room = [[None] * len (boss_room) for i in range (len (boss_room[0]))] # 270 degres = swaps the width and the height
             for line in range (len (boss_room)) :
                 for column in range (len (boss_room[line])) :
                     new_boss_room[column][len (boss_room) - 1 - line] = boss_room[line][column]
@@ -127,15 +127,15 @@ def stage_generator (stage_size:int, table_boss_rooms:list)->list :
 
 def colision_test (boss_rooms:list, stage:list, x_starting_coordinate:int, y_starting_coordinate:int) :
     """
-    function that checks if the boss's room to generate meets colision
+    function that checks if the boss room to generate meets colision
     
     input :
         - boss_rooms : it's the matrice that represent the boss room
-        - stage : this is the stage that the function will modify 
+        - stage : this is the stage that the function will modify
         - x_starting_coordinate,  y_starting_coordinate : the angle coordinate of the boss room
         
     output :
-        - True or False : if the boss room that we want to generate meets colision
+        - If the boss room that we want to generate meets collision
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
@@ -149,11 +149,9 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
     function that generates a boss room on the stage
     
     input :
-        - boss_rooms : it's the matrice that represent the boss room
+        - boss_rooms : it's the matrix that represents the boss room
         - stage : this is the stage that the function will modify 
         - x_starting_coordinate,  y_starting_coordinate : the angle coordinate of the boss room
-        - boss_position see function stage_generator
-        - door_position see function stage_generator
     """
     for line in range (len (boss_rooms)) :
         for column in range (len (boss_rooms[line])) :
@@ -168,13 +166,13 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
 
 def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """
-    function that generates path between two boss room on the stage
+    function that generates a path between two boss rooms on the stage
     It’s a recursive function
     input :
-        - stray_pos : a table containing the potentialy position of the stray
+        - stray_pos : a table containing the potentially position of the stray
         - stage : this is the stage that the function will modify 
-        - x_finish_position, y_finish_position : position of a first door
-        - x_departur_position, y_departur_position : position of a second door
+        - x_finish_position, y_finish_position : position of the first door
+        - x_departur_position, y_departur_position : position of the second door
     """
     if (x_departur_position == x_finish_position) and (y_departur_position == y_finish_position) :
         stray_pos.append ((x_finish_position, y_finish_position))
@@ -185,7 +183,7 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
     ideals = []
     not_ideals = []
     
-    #Search for the best directions to take from the first door 
+    #Search for the best directions to go to from the first door 
     if (x_departur_position <= 1) :
         ideals.append((1, 0))
     elif (x_departur_position >= (len (stage) - 1)) :
@@ -199,7 +197,7 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
     else :
         not_ideals.extend ([(1, 0), (-1, 0)])
         
-    #Search for the best directions to take from the second door 
+    #Search for the best directions to go to from the second door 
     if (y_departur_position <= 1) :
         ideals.append((0, 1))
     elif (y_departur_position >= (len (stage[0]) - 1)) :
@@ -232,12 +230,8 @@ def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:i
 ########principal########
 
 if __name__ == "__main__" :
-    #size = 6
-    #table = [[[" ", "#", " ", "#"], [" ", "#", "#", "#"], ["#", "#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"]], [["#", " ", "#"], [" ", "#", "#"], ["#", " ", "#"], ["#", "#", " "]]]
-    #for this test the size must biger than 4.
-    #size = 18 * 2
+    #for this test the size must bigger than 4.
     size = 23 * 2
-    # " " = void, "#" = wall, "." = door, "M" = doormat, "-" = ground, "B" = boss, "_" = path
     '''
     table = [
         [
