@@ -36,7 +36,6 @@ class Player (entity.Entity) :
         self.rooms = rooms
         self.ib = None              # the boss index
         self.nb_living_boss = nb_boss
-        self.is_dead = False
         self.music = music
         self.screen = video
     
@@ -58,12 +57,17 @@ class Player (entity.Entity) :
             # player vs stray
             for vag in vags :
                 if (self.coord == vag.get_pos ()) and not vag.is_dead () :
+                    print ()
+                    print ("***********************")
+                    print ("player hit")
+                    print ("vag : ", vag.get_health())
                     self.coord = (self.coord[0] - coor[0], self.coord[1] - coor[1])
                     critical = random.random ()
                     if critical > 0.5 :
                         vag.set_health (vag.get_health() - (self.damage * 2))
                     vag.set_health (vag.get_health() - self.damage)
-                    ret = False
+                    print ("vag : ", vag.get_health())
+                    self.screen.move_origin ((-coor[0], -coor[1]))                              # if not, the camera move but not the player...
         elif (self.can_play) :                                                                  # he's fighting but he can play
             ret = super ().move (coor, map, self.forbiden_paths)
             self.music.move (coor)
@@ -117,7 +121,7 @@ class Player (entity.Entity) :
                 self.nb_living_boss -= 1
 
         if (map[self.coord[1]][self.coord[0]] == " ") :                                                      # void
-            self.is_dead = True
+            self.hp = 0
     
     def is_fighting (self)->bool :
         """
@@ -138,7 +142,7 @@ class Player (entity.Entity) :
         output :
             - the boolean value
         """
-        return self.nb_living_boss == 0 or self.is_dead
+        return self.nb_living_boss == 0 or self.is_dead ()
 
     def go_to (self, coor:tuple, map:list) :
             """

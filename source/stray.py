@@ -27,12 +27,13 @@ class Stray (monster.Monster) :
                 # print (algo.a_star_path(map, self.coord, self.player.get_pos ()))
                 # print (self.player.get_pos ())
                 if (coo == self.player.get_pos ()) :
-                    print ("hurt")
+                    print ("***********************")
+                    print ("vags hit")
+                    print ("player : ", self.player.get_health ())
                     coo = self.coord
                     dammage = random.randint (5, 10)
-                    print (self.player.get_health())
                     self.player.set_health (self.player.get_health() - ((self.player.get_hp () * dammage) // 100))
-                    print (self.player.get_health())
+                    print ("player : ", self.player.get_health ())
                 self.coord = coo
             else :
                 posibilities = [(0, 1), (0, -1), (1, 0), (-1, 0)]
