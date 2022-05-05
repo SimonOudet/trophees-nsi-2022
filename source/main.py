@@ -4,6 +4,7 @@ import general as ge
 import sequence
 import pygame
 import player
+import music
 import stray
 import stage
 import video
@@ -12,27 +13,31 @@ import time
 import boss
 import sys
 
-def init ()->list :
+def init ()-> list :
     """
     The game initialization function
 
     output :
         - the screen representation with a Video object
+        - the music representation with a Music object
         - the level representation with a Level object
     """
     pygame.init ()
 
+    MOVE_SECOND = 10
     # level genreration
     map, rooms = generate_map (20, 20)
-    current_level = level.Level (map, player.Player (video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB), ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20), [], [], [])
-    # add the bosses
-    current_level.add_monsters ([boss.Boss (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[c].get_boss_position (), rooms[c].get_door_position (), 20, load_seq ("boss", c, rooms[c].get_orientation ()), current_level) for c in range (len (rooms))], True) # !CHANGE!
-    # add the vagabonds
-    current_level.add_monsters ([stray.Stray (video.Video.load_animation (ge.Val.MONSTER_PATH, ge.Val.MONSTER_NB), ge.Val.MONSTER_TIMES, rooms[1].get_boss_position (), 20, current_level.get_player ())])
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
+    # audio
+    audio = music.Music (len (rooms) - 1,  [rooms[i].get_orientation () for i in range (1, len (rooms))]) # the first room is not a boss room
+    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
+    # add the bosses
+    current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
+    # add the vagabonds
+    # current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, rooms[-1].get_boss_position (), 20, current_level.get_player (), MOVE_SECOND)])
 
-    return screen, current_level
+    return screen, audio, current_level
 
 def generate_map (w:int, h:int)->list :
     """
@@ -45,75 +50,101 @@ def generate_map (w:int, h:int)->list :
     output :
         - a double array wich represent the map
     """
-    return stage.stage_generator (60 * 2,
+    return stage.stage_generator (64 * 2,
     [
         [
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
-        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", "B", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", ".", "-", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
-        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
-        ],
-        [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
-        ["M", "#", "-", "B", "-", "#", "M"], 
+        ["M", "#", "-", "P", "-", "#", "M"], 
         ["M", "#", "-", "-", "-", "#", "M"], 
         ["M", "#", "-", "-", "-", "#", "M"], 
         ["M", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M"]
         ],
+        # saxo
         [
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
-        ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
-        ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
-        ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", "B", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "A", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "-", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ],
+        #[
+        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        #["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", "B", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "5", "4", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "6", "3", "1", "A", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", " ", " ", "2", "-", " ", " ", " ", " ", " ", "#", "M"], 
+        #["M", "#", "#", "#", "#", ".", "#", "#", "#", "#", "#", "#", "M"], 
+        #["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        #],
+        # clar
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", "A", ".", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", "B", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ],
+        # drums OK
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", ".", "A", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", " ", " ", " ", "B", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M"]
+        ],
+        # bass
+        [
+        ["M", "M", "M", "M", "M", "M", "M", "M", "M"],
         ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
+        ["M", "#", "B", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", " ", " ", "#", "M"], 
+        ["M", "#", " ", " ", " ", "A", " ", "#", "M"], 
+        ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
-        ], 
-        [
-        ["M", "M", "M", "M", "M", "M"], 
-        ["M", " ", "#", "#", "#", "M"], 
-        ["M", "#", "#", "-", "#", "M"], 
-        ["M", "#", "-", "-", ".", "M"], 
-        ["M", "#", "#", "B", "#", "M"], 
-        ["M", " ", "#", "#", "#", "M"], 
-        ["M", "M", "M", "M", "M", "M"]
-        ], 
+        ],
+        # trum OK
         [
         ["M", "M", "M", "M", "M", "M", "M"], 
         ["M", "#", "#", "#", "#", "#", "M"], 
-        ["M", "#", "-", "B", "-", "#", "M"], 
-        ["M", "#", "-", "-", "-", "#", "M"], 
-        ["M", "#", "-", "-", "-", "#", "M"], 
-        ["M", "#", "#", ".", "#", "#", "M"], 
+        ["M", "#", " ", " ", "B", "#", "M"], 
+        ["M", "#", " ", " ", " ", "#", "M"], 
+        ["M", ".", "A", " ", " ", "#", "M"], 
+        ["M", "#", "#", "#", "#", "#", "M"], 
         ["M", "M", "M", "M", "M", "M", "M"]
-        ], 
-        [
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M"], 
-        ["M", "#", "#", "#", "#", ".", "#", "#", "M"], 
-        ["M", "#", "-", "-", "-", "-", "-", "#", "M"], 
-        ["M", "#", "B", "-", "-", "-", "-", "#", "M"], 
-        ["M", "#", "#", "#", "#", "#", "#", "#", "M"], 
-        ["M", "M", "M", "M", "M", "M", "M", "M", "M"]
-        ], 
-        [
-        ["M", "M", "M", "M", "M", "M"], 
-        ["M", " ", "#", "#", "#", "M"], 
-        ["M", "#", "#", "-", "#", "M"], 
-        ["M", "#", "-", "-", ".", "M"], 
-        ["M", "#", "#", "B", "#", "M"], 
-        ["M", " ", "#", "#", "#", "M"], 
-        ["M", "M", "M", "M", "M", "M"]
         ]
     ]) # !TO CHANGE!
     #for i in level :
@@ -133,17 +164,17 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
     """
     seq = sequence.Sequence ()
     actions = []
-    time = 0
+    time = -1
     type = "A"
-    with open ('data/' + name + str (i) + '.txt','r') as fichier :
+    with open ('data/fights_sequences/' + name + str (i) + '.txt','r') as fichier :
         # for linux :
         for ligne in fichier :
             ligne = ligne.rstrip ('\n')
             if (len (ligne) == 0) :                 # ligne break = new actions
                 seq.add_actions (actions, time)
                 actions = []
-                time = 0
-            elif (time == 0) :                      # time
+                time = -1
+            elif (time == -1) :                     # time
                 time = int (ligne)
             elif (len (ligne) == 1) :               # type
                     type = ligne[0]
@@ -154,59 +185,56 @@ def load_seq (name:str, i:int, orientation:tuple)->sequence.Sequence :
                 actions.append (sequence.Action (type, (x * orientation[1][0], y * orientation[1][1])))
     return seq
 
-screen, current_level = init ()
-key_cooldown = {97:False, 100:False, 119:False, 115:False}
+screen, audio, current_level = init ()
 played = False # if we have to resolve the player action
 
 # main loop
-while True :
+while not current_level.get_player ().is_end () :
+
+    # print (current_level.get_bosses ()[-1].get_current ()[0][0])
 
     # events
     for event in pygame.event.get () :
         if event.type == pygame.QUIT :
             sys.exit ()
         elif event.type == pygame.VIDEORESIZE :
-            screen.change_screen_size (event.size)
+                screen.change_screen_size (event.size)
         # keyboard
-        if (pygame.key.get_pressed ()[97]) :        # left
-            if (key_cooldown[97]) :
-                key_cooldown[97] = False
-            else :
-                dir = (-1, 0)
-                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
-                    screen.move_origin (dir)
+        if (pygame.key.get_pressed ()[pygame.K_a]) :
+        # if (pygame.key.get_pressed ()[pygame.K_KP4]) :           # left
+            dir = (-1, 0)
+            played = True
+        elif (pygame.key.get_pressed ()[pygame.K_d]) :
+        # elif (pygame.key.get_pressed ()[pygame.K_KP6]) :         # right
+            dir = (1, 0)
+            played = True
+        elif (pygame.key.get_pressed ()[pygame.K_w]) :
+        # elif (pygame.key.get_pressed ()[pygame.K_KP8]) :         # top
+            dir = (0, -1)
+            played = True
+        elif (pygame.key.get_pressed ()[pygame.K_s]) : 
+        # elif (pygame.key.get_pressed ()[pygame.K_KP2]) :         # bottom
+            dir = (0, 1)
+            played = True
+        elif (current_level.get_player ().is_fighting ()) :
+            if (pygame.key.get_pressed ()[pygame.K_q]) :       # diagonal left top
+                dir = (-1, -1)
                 played = True
-                key_cooldown[97] = True
-        elif (pygame.key.get_pressed ()[100]) :        # right
-            if (key_cooldown[100]) :
-                key_cooldown[100] = False
-            else :
-                dir = (1, 0)
-                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
-                    screen.move_origin (dir)
+            elif (pygame.key.get_pressed ()[pygame.K_e]) :     # diagonal right top
+                dir = (1, -1)
                 played = True
-                key_cooldown[100] = True
-        elif (pygame.key.get_pressed ()[119]) :        # top
-            if (key_cooldown[119]) :
-                key_cooldown[119] = False
-            else :
-                dir = (0, -1)
-                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
-                    screen.move_origin (dir)
+            elif (pygame.key.get_pressed ()[pygame.K_z]) :     # diagonal left bottom
+                dir = (-1, 1)
                 played = True
-                key_cooldown[119] = True
-        elif (pygame.key.get_pressed ()[115]) :        # bottom
-            if (key_cooldown[115]) :
-                key_cooldown[115] = False
-            else :
-                dir = (0, 1)
-                if (current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())) : # the player has moved
-                    screen.move_origin (dir)
+            elif (pygame.key.get_pressed ()[pygame.K_x]) :     # diagonal right bottom
+                dir = (1, 1)
                 played = True
-                key_cooldown[115] = True
+        
+    if played : # the player has moved
+        current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())
 
     # pulse
-    for p in current_level.get_pulsable () :
+    for p in current_level.get_pulsable () :            # note : the player always pulse before any monster
         p.pulse (current_level.get_map (), played)
     played = False
 
@@ -217,3 +245,5 @@ while True :
         screen.add (surf, coor)
     screen.refresh ()
     time.sleep (0.01)
+
+print ("GAME OVER")

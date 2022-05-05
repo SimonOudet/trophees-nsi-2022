@@ -2,23 +2,39 @@
 
 import drawable
 import random
+<<<<<<< HEAD
 
 class Entity (drawable.Drawable) :
     def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int, tab_vags:list):
+=======
+import level
+import pygame
+
+
+class Entity (drawable.Drawable) :
+    def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
+>>>>>>> abb3a71bb05c0726636229438e7f456b7908ac50
         """
         Basic constructor of a entity object
         
         input :
-            - anim : a list of all Surface used for the animation
-            - times : a list of all times (in ms) of all frame of the animation
+            - anims : a list of list of all Surface used for the animation
+            - times : a list of list of all times (in ms) of all frame of the animation
             - ID : unique identifier
             - coord : the coordinates of the top left corner
             - hp : starting health points
+            - MOVE_SECOND : the number of moving allowed for a second
         """
         super ().__init__ (anim, times, ID, coord)
         self.hp_base = hp
         self.hp = hp
+<<<<<<< HEAD
         self.vags = tab_vags
+=======
+        self.moving_clock = pygame.time.Clock ()
+        self.moving_time = 0
+        self.MOVE_SECOND = MOVE_SECOND        
+>>>>>>> abb3a71bb05c0726636229438e7f456b7908ac50
         
     def get_hp (self)->int :
         """
@@ -64,10 +80,11 @@ class Entity (drawable.Drawable) :
         input :
             - coor : the coordinates that will increase the currents coordinates
             - map : the level representation
-            - forbiden : a tuple of tuple with positions forbiden
+            - forbiden : a list of tuple with positions forbiden
         output :
             - if we have change our position
         """
+<<<<<<< HEAD
         x = self.coord [0] + coor [0]
         y = self.coord [1] + coor [1]
         size = (len (map[0]), len (map))
@@ -87,6 +104,31 @@ class Entity (drawable.Drawable) :
             self.vags = new_vags
             self.coord = coo
             return True
+=======
+        self.moving_time += self.moving_clock.tick ()
+        if (self.moving_time >= 1000 / self.MOVE_SECOND) :
+            self.moving_time = 0
+            x = self.coord [0] + coor [0]
+            y = self.coord [1] + coor [1]
+            size = (len (map[0]), len (map))
+            if (x < size[0]) and (x >= 0) and (y < size[1]) and (y >= 0) and (map[y][x] != "#") and ((x, y) not in forbiden) :
+              coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
+              #player vs stray
+              new_vags = []
+              vags = level.get_vagabonds ()
+              for vag in vags :
+                  if (coo == vag.get_pos ()) :
+                      coo = self.coord
+                      critical = random.random ()
+                      if critical > 0.5 :
+                          vag.set_health (vag.get_health() - (damage * 2))
+                      vag.set_health (vag.get_health() - damage)
+                  if (vag.get_health() > 0) :
+                      new_vags.append (vag)
+              level.Level.add_monsters(new_vags)
+              self.coord = coo
+              return True
+>>>>>>> abb3a71bb05c0726636229438e7f456b7908ac50
         return False
     
     def go_to (self, coor:tuple, map:list) :
@@ -98,5 +140,7 @@ class Entity (drawable.Drawable) :
             - map : the level representation
         """
         size = (len (map[0]), len (map))
-        if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] == "-") :
+        if (coor[0] < size[0]) and (coor[0] >= 0) and (coor[1] < size[1]) and (coor[1] >= 0) and (map[coor[1]][coor[0]] != "#") :
             self.coord = coor
+            return True
+        return False
