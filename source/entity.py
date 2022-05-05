@@ -2,10 +2,9 @@
 
 import drawable
 import random
-import level
 
 class Entity (drawable.Drawable) :
-    def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int):
+    def __init__ (self, anim:list, times:list, ID:str, coord:tuple, hp:int, tab_vags:list):
         """
         Basic constructor of a entity object
         
@@ -19,6 +18,7 @@ class Entity (drawable.Drawable) :
         super ().__init__ (anim, times, ID, coord)
         self.hp_base = hp
         self.hp = hp
+        self.vags = tab_vags
         
     def get_hp (self)->int :
         """
@@ -75,8 +75,7 @@ class Entity (drawable.Drawable) :
             coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
             #player vs stray
             new_vags = []
-            vags = level.get_vagabonds ()
-            for vag in vags :
+            for vag in self.vags :
                 if (coo == vag.get_pos ()) :
                     coo = self.coord
                     critical = random.random ()
@@ -85,14 +84,14 @@ class Entity (drawable.Drawable) :
                     vag.set_health (vag.get_health() - damage)
                 if (vag.get_health() > 0) :
                     new_vags.append (vag)
-            level.Level.add_monsters(new_vags)
+            self.vags = new_vags
             self.coord = coo
             return True
         return False
     
     def go_to (self, coor:tuple, map:list) :
         """
-        Chnage the position of the entity
+        Change the position of the entity
         
         input :
             - coor : the new coordinates
