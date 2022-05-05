@@ -3,7 +3,7 @@
 import entity
 
 class Monster (entity.Entity) :
-    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, coord:tuple, hp:int, MOVE_SECOND:float, ID="M"):
         """
         Basic constructor of a Monster object
         
@@ -14,4 +14,4 @@ class Monster (entity.Entity) :
             - hp : starting health points
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anims, times, "M", coord, hp, MOVE_SECOND)
+        super ().__init__ (anims, times, ID, coord, hp, MOVE_SECOND)

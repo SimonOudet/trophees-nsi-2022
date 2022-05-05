@@ -27,8 +27,8 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
     """
     if (src == dst) :
         return True
-    for node in get_diag_neighbours (src, map) :
-        if (map[node[1]][node[0]] == "#") or (node in closed) :
+    for node in get_neighbours (src, map) :
+        if (map[node[1]][node[0]] == "#") or (map[node[1]][node[0]] == ".") or (node in closed) :
             continue
         elif (node in open) : # refresh
             q = get_quality (src, node, dst)

@@ -21,7 +21,7 @@ class Boss (monster.Monster) :
             - level : the level representation
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anims, times, "B", coord, hp, MOVE_SECOND)
+        super ().__init__ (anims, times, coord, hp, MOVE_SECOND, "B")
         print (self.ID)
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()

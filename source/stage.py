@@ -169,7 +169,7 @@ def room_generator (boss_rooms:list, stage:list, x_starting_coordinate:int, y_st
 def path (stray_pos:list, stage:list, x_finish_position:int, y_finish_position:int, x_departur_position:int, y_departur_position:int) :
     """
     function that generates path between two boss room on the stage
-    It’s a recursive function
+    It's a recursive function
     input :
         - stray_pos : a table containing the potentialy position of the stray
         - stage : this is the stage that the function will modify 

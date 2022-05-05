@@ -20,23 +20,27 @@ class Stray (monster.Monster) :
             - map : a double array wich represent a map of the level (see Level class)
             - played : if we have to resolve the player action
         """
-        if played == True :
+        if played == True and not self.is_dead ():
             if self.agro :
+                print ("AGRO")
                 coo = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
+                # print (algo.a_star_path(map, self.coord, self.player.get_pos ()))
+                # print (self.player.get_pos ())
                 if (coo == self.player.get_pos ()) :
-                    coo = self.coor
+                    # print ("hurt")
+                    coo = self.coord
                     dammage = random.randint (5, 10)
                     self.player.set_health (self.player.get_health() - ((self.player.get_hp () * dammage) // 100))
-                self.coor = coo
+                self.coord = coo
             else :
                 posibilities = [(0, 1), (0, -1), (1, 0), (-1, 0)]
                 random.shuffle(posibilities)
                 direction = posibilities.pop()
                 coordonnee = (self.coord[0] + direction[0], self.coord[1] + direction[1])
-                while not(algo.is_in_map(coordonnee, map)) or (map[coordonnee[1]][coordonnee[0]] == "#") :
+                while not(algo.is_in_map(coordonnee, map)) or (map[coordonnee[1]][coordonnee[0]] == "#") or (map[coordonnee[1]][coordonnee[0]] == ".") :
                     direction = posibilities.pop()
                     coordonnee = (self.coord[0] + direction[0], self.coord[1] + direction[1])
                 self.coord = coordonnee
                 vision = []
-                algo.manatan_vision (4, map, self.coord, vision, {})
+                algo.manatan_vision (5, map, self.coord, vision, {})
                 self.agro = self.player.get_pos () in vision

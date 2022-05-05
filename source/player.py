@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import random
 import general as ge
 import entity
 import pygame
@@ -39,7 +40,7 @@ class Player (entity.Entity) :
         self.music = music
         self.screen = video
     
-    def move (self, coor:tuple, map:list, bosses:list)->bool :
+    def move (self, coor:tuple, map:list, bosses:list, vags:list, forbiden=())->bool :
         """
         Move the entity
         
@@ -47,12 +48,25 @@ class Player (entity.Entity) :
             - coor : the coordinates that will increase the currents coordinates
             - map : the level representation
             - bosses : a list of the bosses
+            - vags : a list of the strays
         output :
             - if we have change our position
         """
         ret = False
         if not self.fighting :                                                                  # normal, he's not fighting
             ret = super ().move (coor, map, self.forbiden_paths)
+            # player vs stray
+            for vag in vags :
+                if (self.coord == vag.get_pos ()) and not vag.is_dead () :
+                    print ("player hurt")
+                    self.coord = (self.coord[0] - coor[0], self.coord[1] - coor[1])
+                    critical = random.random ()
+                    print (vag.get_health())
+                    if critical > 0.5 :
+                        vag.set_health (vag.get_health() - (self.damage * 2))
+                    vag.set_health (vag.get_health() - self.damage)
+                    print (vag.get_health())
+                    ret = False
         elif (self.can_play) :                                                                  # he's fighting but he can play
             ret = super ().move (coor, map, self.forbiden_paths)
             self.music.move (coor)

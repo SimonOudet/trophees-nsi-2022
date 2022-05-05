@@ -26,16 +26,16 @@ def init ()-> list :
 
     MOVE_SECOND = 10
     # level genreration
-    map, rooms = generate_map (20, 20)
+    map, rooms, stray_pos = generate_map (20, 20)
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
     # audio
     audio = music.Music (len (rooms) - 1,  [rooms[i].get_orientation () for i in range (1, len (rooms))]) # the first room is not a boss room
-    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
+    current_level = level.Level (map, player.Player ([video.Video.load_animation (ge.Val.PLAYER_PATH, ge.Val.PLAYER_NB)], ge.Val.PLAYER_TIMES, rooms[0].get_boss_position (), 20, 5, rooms, len (rooms), audio, screen, MOVE_SECOND), [], [], [])
     # add the bosses
     current_level.add_monsters ([boss.Boss ([video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1), ge.Val.BOSS_NB), video.Video.load_animation (ge.Val.BOSS_PATH + str (c - 1) + "_think", ge.Val.BOSS_NB)], ge.Val.BOSS_TIMES, rooms[c].get_boss_position (), rooms[c].get_activ_position (), 20, load_seq ("boss", c - 1, rooms[c].get_orientation ()), current_level, MOVE_SECOND) for c in range (1, len (rooms))], True) # !CHANGE!
     # add the vagabonds
-    # current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, rooms[-1].get_boss_position (), 20, current_level.get_player (), MOVE_SECOND)])
+    current_level.add_monsters ([stray.Stray ([video.Video.load_animation (ge.Val.STRAY_PATH, ge.Val.STRAY_NB)], ge.Val.STRAY_TIMES, stray_pos[i], 20, current_level.get_player (), MOVE_SECOND) for i in range (len (stray_pos))])
 
     return screen, audio, current_level
 
@@ -201,20 +201,23 @@ while not current_level.get_player ().is_end () :
                 screen.change_screen_size (event.size)
         # keyboard
         if (pygame.key.get_pressed ()[pygame.K_a]) :
-        # if (pygame.key.get_pressed ()[pygame.K_KP4]) :           # left
+        # if (pygame.key.get_pressed ()[pygame.K_KP4]) :            # left
             dir = (-1, 0)
             played = True
         elif (pygame.key.get_pressed ()[pygame.K_d]) :
-        # elif (pygame.key.get_pressed ()[pygame.K_KP6]) :         # right
+        # elif (pygame.key.get_pressed ()[pygame.K_KP6]) :          # right
             dir = (1, 0)
             played = True
         elif (pygame.key.get_pressed ()[pygame.K_w]) :
-        # elif (pygame.key.get_pressed ()[pygame.K_KP8]) :         # top
+        # elif (pygame.key.get_pressed ()[pygame.K_KP8]) :          # top
             dir = (0, -1)
             played = True
         elif (pygame.key.get_pressed ()[pygame.K_s]) : 
-        # elif (pygame.key.get_pressed ()[pygame.K_KP2]) :         # bottom
+        # elif (pygame.key.get_pressed ()[pygame.K_KP2]) :          # bottom
             dir = (0, 1)
+            played = True
+        elif (pygame.key.get_pressed ()[pygame.K_p]) :              # wait
+            dir = (0, 0)
             played = True
         elif (current_level.get_player ().is_fighting ()) :
             if (pygame.key.get_pressed ()[pygame.K_q]) :       # diagonal left top
@@ -231,7 +234,7 @@ while not current_level.get_player ().is_end () :
                 played = True
         
     if played : # the player has moved
-        current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses ())
+        played = current_level.get_player ().move (dir, current_level.get_map (), current_level.get_bosses (), current_level.get_vagabonds ())
 
     # pulse
     for p in current_level.get_pulsable () :            # note : the player always pulse before any monster
