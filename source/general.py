@@ -29,7 +29,7 @@ class Val :
     DOOR_TIMES = [[1000], [1000]]
 
     TIME_PLAY = 0.9
-    MUSIC_TO_TIME = 700 # 300 # 900
+    MUSIC_TO_TIME = 1000 # 300 # 900
     
 class Room :
     def __init__ (self) :

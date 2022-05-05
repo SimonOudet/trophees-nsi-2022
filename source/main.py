@@ -252,6 +252,6 @@ while not current_level.get_player ().is_end () :
         surf, coor = d.draw ()
         screen.add (surf, coor)
     screen.refresh ()
-    time.sleep (0.01)
+    # time.sleep (0.01)
 
 print ("GAME OVER")

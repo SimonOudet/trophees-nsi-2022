@@ -81,7 +81,7 @@ class Player (entity.Entity) :
                 self.forbiden_paths.append (self.rooms[i].get_door_position ())
                 break
         if (self.ib != None) and not self.fighting :                                            # we juste activate a boss
-            self.vision = 40                                                                    # now we can see all the room
+            self.vision = 80                                                                    # now we can see all the room
             self.fighting = True
             self.boss = bosses[self.ib]
             self.boss.trigger ()
