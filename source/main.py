@@ -13,7 +13,7 @@ import time
 import boss
 import sys
 
- def init ()-> list :
+def init ()-> list :
     """
     The game initialization function
 
