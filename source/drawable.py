@@ -67,5 +67,4 @@ class Door (Drawable) :
         Switch from a unlocked texture
         to a locked
         """
-        print ("locked")
         self.i_anim = 1

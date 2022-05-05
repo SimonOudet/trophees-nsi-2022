@@ -81,13 +81,12 @@ class Player (entity.Entity) :
                 self.forbiden_paths.append (self.rooms[i].get_door_position ())
                 break
         if (self.ib != None) and not self.fighting :                                            # we juste activate a boss
-            self.vision = 80                                                                    # now we can see all the room
+            self.vision = 3                                                                     # for optimisation
             self.fighting = True
             self.boss = bosses[self.ib]
             self.boss.trigger ()
             self.music.start_fight (self.ib)
             self.music_clock.tick ()
-            print ("he's playing")
         if (ret) :
             self.screen.move_origin (coor)
         return ret
@@ -101,17 +100,14 @@ class Player (entity.Entity) :
             - map : a double array wich represent a map of the level (see Level class)
             - played : if we have to resolve the player action
         """
-        # print (self.can_play and self.have_play)
         if self.fighting :
             self.music_time += self.music_clock.tick ()
             if self.have_play and (self.music_time >= ge.Val.TIME_PLAY * ge.Val.MUSIC_TO_TIME) :            # he have to play AND it's the end
-                # print ("stop")
                 self.have_play = False
                 self.can_play = False
                 self.music_time = 0
                 self.time_wait = self.boss.get_current ()[1]
             elif not self.have_play and (self.music_time >= (self.time_wait - ge.Val.TIME_PLAY) * ge.Val.MUSIC_TO_TIME) :   # he's waiting AND it's the end
-                # print ("can play")
                 self.have_play = True
                 self.can_play = True
                 self.music_time = 0
@@ -121,7 +117,6 @@ class Player (entity.Entity) :
                 self.music.stop_fight ()
                 self.go_to ((self.rooms[self.ib + 1].get_door_position ()), map)                            # +1 beacause of the first room, the player starting room
                 self.forbiden_paths.append (self.rooms[self.ib + 1].get_activ_position ())
-                print ("TP")
                 self.boss.lock (self.coord)
                 self.ib = None
                 self.nb_living_boss -= 1

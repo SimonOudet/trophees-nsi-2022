@@ -22,7 +22,6 @@ class Boss (monster.Monster) :
             - MOVE_SECOND : the number of moving allowed for a second
         """
         super ().__init__ (anims, times, coord, hp, MOVE_SECOND, "B")
-        print (self.ID)
         self.sequence = sequence
         self.music_clock = pygame.time.Clock ()
         self.music_time = 0
@@ -46,7 +45,6 @@ class Boss (monster.Monster) :
         if (self.is_active) :
             self.music_time += self.music_clock.tick ()
             if (self.music_time >= self.current_action[1] * ge.Val.MUSIC_TO_TIME) :                         # the boss have to play
-                print ("play")
                 self.i_anim = 0                                                                             # not thinking
                 self.music_time = 0
                 # do the current actions
@@ -103,7 +101,6 @@ class Boss (monster.Monster) :
         """
         self.is_active = True
         self.music_clock.tick ()
-        print ("activation : ", self.ID)
     
     def get_current (self)-> tuple :
         """

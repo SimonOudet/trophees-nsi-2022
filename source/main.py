@@ -196,8 +196,6 @@ played = False # if we have to resolve the player action
 # main loop
 while not current_level.get_player ().is_end () :
 
-    # print (current_level.get_bosses ()[-1].get_current ()[0][0])
-
     # events
     for event in pygame.event.get () :
         if event.type == pygame.QUIT :

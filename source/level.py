@@ -215,7 +215,7 @@ class Level :
             - all the drawable object of this level
         """
         player_vision = []
-        algo.manatan_vision (5, self.map, player_pos, player_vision, self.discover)
+        algo.manatan_vision (self.player.get_vision (), self.map, player_pos, player_vision, self.discover)
         return [i for i in self.hiden_environment if self.discover[i.get_pos ()]] + [door for door in self.hiden_door if self.discover[door.get_pos ()]] + [i for i in self.environment if i.get_pos () in player_vision] + [door for door in self.door if door.get_pos () in player_vision] + [self.player] + [boss for boss in self.bosses if boss.get_pos () in player_vision] + [vag for vag in self.vags if (vag.get_pos () in player_vision) and not vag.is_dead ()] # !CHANGE!
 
     def get_pulsable (self)->list :
@@ -236,6 +236,5 @@ class Level :
             - coord : the coordinates of the door
         """
         i = algo.search_drawable (self.door, coord)
-        print(i)
         self.door[i].lock ()
         self.hiden_door[i].lock ()

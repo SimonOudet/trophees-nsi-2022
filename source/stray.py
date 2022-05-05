@@ -22,10 +22,7 @@ class Stray (monster.Monster) :
         """
         if played == True and not self.is_dead ():
             if self.agro :
-                print ("AGRO")
                 coo = algo.a_star_path(map, self.coord, self.player.get_pos ())[1]
-                # print (algo.a_star_path(map, self.coord, self.player.get_pos ()))
-                # print (self.player.get_pos ())
                 if (coo == self.player.get_pos ()) :
                     print ("***********************")
                     print ("vags hit")

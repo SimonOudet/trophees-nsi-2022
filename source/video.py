@@ -97,5 +97,4 @@ class Video :
         output :
             - the list of Surface
         """
-        print (n)
         return [pygame.image.load ("img/" + path + str (i) + ".png") for i in range (n)]
