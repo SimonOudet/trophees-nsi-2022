@@ -2,12 +2,11 @@
 
 import drawable
 import random
-import level
 import pygame
 
 
 class Entity (drawable.Drawable) :
-    def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, MOVE_SECOND:float):
+    def __init__ (self, anims:list, times:list, ID:str, coord:tuple, hp:int, vags:list, MOVE_SECOND:float):
         """
         Basic constructor of a entity object
         
@@ -17,13 +16,15 @@ class Entity (drawable.Drawable) :
             - ID : unique identifier
             - coord : the coordinates of the top left corner
             - hp : starting health points
+            - vags : a list of all the vagabonds
             - MOVE_SECOND : the number of moving allowed for a second
         """
-        super ().__init__ (anim, times, ID, coord)
+        super ().__init__ (anims, times, ID, coord)
         self.hp_base = hp
         self.hp = hp
         self.moving_clock = pygame.time.Clock ()
         self.moving_time = 0
+        self.vags = [vag for vag in vags]
         self.MOVE_SECOND = MOVE_SECOND        
         
     def get_hp (self)->int :
@@ -84,8 +85,7 @@ class Entity (drawable.Drawable) :
               coo = (self.coord [0] + coor [0], self.coord [1] + coor [1])
               #player vs stray
               new_vags = []
-              vags = level.get_vagabonds ()
-              for vag in vags :
+              for vag in self.vags :
                   if (coo == vag.get_pos ()) :
                       coo = self.coord
                       critical = random.random ()
@@ -94,7 +94,7 @@ class Entity (drawable.Drawable) :
                       vag.set_health (vag.get_health() - damage)
                   if (vag.get_health() > 0) :
                       new_vags.append (vag)
-              level.Level.add_monsters(new_vags)
+              self.vags = new_vags
               self.coord = coo
               return True
         return False

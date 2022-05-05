@@ -1,0 +1,37 @@
+
+Main :
+    main.py :
+        Le fichier general qui initialise tout
+        et qui contient la main loop
+
+Structures de donnees :
+    general.py :
+        Contient des constantes general a tout le
+        programme, ainsi que lq structure de donnee
+        Room qui represent une salle
+    level.py :
+        Represente le niveau, avec nottament la map,
+        le joueur, les boss et les vagabonds
+    music.py (Pulsable) :
+        Le gestionnaire de musique du jeux,
+        nottament lor des combats de boss
+    sequence.py :
+        Contient deux classes, Sequence qui represente
+        une sequence d'Action jouee par un boss et
+        Action qui correspond a la supression ou a
+        l'ajout d'une tuile
+    video.py :
+        Interface pour tout ce qui est affichage
+
+Algo :
+    algo.py
+    stage.py
+
+Composants :
+    pulsable.py
+    drawable.py (Pulsable)
+    entity.py (Drawable)
+    player.py (Entity)
+    monster.py (Entity)
+    boss.py (Monster)
+    stray.py (Monster)

@@ -2,11 +2,11 @@
 
 import general as ge
 import sequence
-import entity
+import monster
 import pygame
 import level
 
-class Boss (entity.Entity) :
+class Boss (monster.Monster) :
     def __init__ (self, anims:list, times:list, coord:tuple, activ:tuple, hp:int, sequence:sequence.Sequence, level:level.Level, MOVE_SECOND:float):
         """
         Basic constructor of a boss object
