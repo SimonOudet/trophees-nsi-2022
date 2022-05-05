@@ -58,14 +58,11 @@ class Player (entity.Entity) :
             # player vs stray
             for vag in vags :
                 if (self.coord == vag.get_pos ()) and not vag.is_dead () :
-                    print ("player hurt")
                     self.coord = (self.coord[0] - coor[0], self.coord[1] - coor[1])
                     critical = random.random ()
-                    print (vag.get_health())
                     if critical > 0.5 :
                         vag.set_health (vag.get_health() - (self.damage * 2))
                     vag.set_health (vag.get_health() - self.damage)
-                    print (vag.get_health())
                     ret = False
         elif (self.can_play) :                                                                  # he's fighting but he can play
             ret = super ().move (coor, map, self.forbiden_paths)
