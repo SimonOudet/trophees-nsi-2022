@@ -25,7 +25,7 @@ import sys
     pygame.init ()
 
     MOVE_SECOND = 10
-    # level genreration
+    # level generation
     map, rooms = generate_map (20, 20)
     # video
     screen = video.Video (2 / 3, rooms[0].get_boss_position ())
