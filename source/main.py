@@ -13,7 +13,7 @@ import time
 import boss
 import sys
 
-*** def init ()-> list :
+ def init ()-> list :
     """
     The game initialization function
 
@@ -40,7 +40,7 @@ import sys
 
 def generate_map (w:int, h:int)->list :
     """
-    Genre a double array wich represent the map
+    Generates a double array wich represent the map
     of the current level
     
     input : 

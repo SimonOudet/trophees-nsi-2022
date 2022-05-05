@@ -16,12 +16,12 @@ class Player (entity.Entity) :
             - times : a list of list of all times (in ms) of all frame of the animation
             - coord : the coordinates of the top left corner
             - hp : starting health points
-***            -damage :
+            - damage : the amout of damage the player deals every attack
             - rooms : a list of all the rooms representation of the level
             - nb_boss : the number of boss of the level
             - music : the music manager
             - video : the video manager
-            - MOVE_SECOND : the number of moving allowed for a second
+            - MOVE_SECOND : the number of movements allowed for a second
         """
         super ().__init__ (anims, times, "P", coord, hp, MOVE_SECOND)
         self.fighting = False

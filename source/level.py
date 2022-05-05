@@ -15,7 +15,7 @@ class Level :
         Basic constructor of a Level object
         
         input :
-            - map : a double array wich represent a map of the level ! TO COMPLETE !
+            - map : a double array wich represent a map of the level
             - player : the player of the level
             - bosses : an array with all the bosses of the level
             - vags : an array with all the vagabonds of the level

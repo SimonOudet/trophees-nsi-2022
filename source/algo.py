@@ -25,7 +25,6 @@ def a_star (map:list, src:tuple, dst:tuple, closed:dict, open={}) :
         - src : the coordinates of the starting point
         - dst : the coordinates of the ending point
         - closed : the coordinates already checked
-***        - open :
     """
     if (src == dst) :
         return True
@@ -100,7 +99,7 @@ def is_in_map (coor:tuple, map:list)-> bool :
 
 def get_quality (src:tuple, test:tuple, dst:tuple)-> int :
     """
-***    Returns the quality of the given coordinates
+    Returns the quality of the given coordinates
 
     input :
         - src : the starting point

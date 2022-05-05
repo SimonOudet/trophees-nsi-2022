@@ -15,7 +15,7 @@ class Boss (entity.Entity) :
             - anims : a list of list of all Surface used for the animation
             - times : a list of lis of all times (in ms) of all frames of the animation
             - coord : the coordinates of the top left corner
-***            - activ : the coordinates where the player agro the boss
+            - activ : the coordinates where the player activates the boss
             - hp : starting health points
             - sequence : the fight sequence
             - level : the level representation
@@ -39,7 +39,7 @@ class Boss (entity.Entity) :
         this boss and when it's his turn
 
         input :
-***            - map : a double array wich represent a map of the level (see Level class)
+            - map : a double array wich represent a map of the level (see Level class)
             - played : if we have to resolve the player action
         """
         if (self.is_active) :
@@ -99,7 +99,7 @@ class Boss (entity.Entity) :
 
     def trigger (self) :
         """
-***        Activation of the boss
+        Activation of the boss
         """
         self.is_active = True
         self.music_clock.tick ()
